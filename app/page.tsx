@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import questionsData from "@/data/questions.json";
 
 import Footer from "@/components/layout/Footer";
 import KalimaHeader from "@/components/layout/KalimaHeader";
@@ -11,17 +12,17 @@ import LoginScreen from "@/components/screens/LoginScreen";
 import QuestionScreen from "@/components/screens/QuestionScreen";
 import ResultCardModal from "@/components/screens/ResultCardModal";
 import StartScreen from "@/components/screens/StartScreen";
-import { checkAnswer, getRandomQuestions } from "@/lib/quiz";
+import { checkAnswer, getStratifiedQuestions } from "@/lib/quiz"
 import {
   getUnseenQuestions,
   getUser,
   markQuestionsSeen,
   saveName,
-} from "@/lib/storage";
-import type { AppState, Question, UserResult } from "@/types/quiz";
+} from "@/lib/storage"
+import { SESSION_SIZE } from "@/lib/constants"
+import type { AppState, Question, UserResult } from "@/types/quiz"
 
-const APP_NAME = "ইসলামিক কুইজ";
-const TOTAL_QUESTIONS = 10;
+const APP_NAME = "ইসলামিক কুইজ"
 
 const quizDescription =
   "কুরআন, হাদিস এবং ইসলামের মৌলিক জ্ঞানভিত্তিক প্রশ্নোত্তর কুইজ। প্রতিটি প্রশ্নে দ্রুত চিন্তা করুন এবং আপনার শেখা যাচাই করুন।";
@@ -37,116 +38,7 @@ const footerLinks = [
   { platform: "email", href: "mailto:you@example.com" },
 ];
 
-const questionBank: Question[] = [
-  {
-    id: 1,
-    question: "ইসলামের প্রথম স্তম্ভ কোনটি?",
-    options: ["সালাত", "জাকাত", "শাহাদাহ", "সাওম"],
-    correctIndex: 2,
-    explanation: "ইসলামের প্রথম স্তম্ভ হলো শাহাদাহ।",
-    category: "Aqidah",
-    difficulty: "easy",
-  },
-  {
-    id: 2,
-    question: "পাঁচ ওয়াক্ত নামাজের মধ্যে দিনের প্রথম নামাজ কোনটি?",
-    options: ["যোহর", "ফজর", "আসর", "মাগরিব"],
-    correctIndex: 1,
-    explanation: "ফজর হলো দিনের প্রথম ফরজ নামাজ।",
-    category: "Salah",
-    difficulty: "easy",
-  },
-  {
-    id: 3,
-    question: "রমজান মাসে রোজা রাখা ইসলামের কত নম্বর স্তম্ভ?",
-    options: ["দ্বিতীয়", "তৃতীয়", "চতুর্থ", "পঞ্চম"],
-    correctIndex: 2,
-    explanation: "সাওম বা রোজা ইসলামের চতুর্থ স্তম্ভ।",
-    category: "Sawm",
-    difficulty: "medium",
-  },
-  {
-    id: 4,
-    question: "কুরআন নাযিলের রাতকে কী বলা হয়?",
-    options: ["লাইলাতুল বরাত", "লাইলাতুল কদর", "জুমার রাত", "আরাফার রাত"],
-    correctIndex: 1,
-    explanation: "লাইলাতুল কদর হলো কুরআন নাযিলের মহিমান্বিত রাত।",
-    category: "Quran",
-    difficulty: "easy",
-  },
-  {
-    id: 5,
-    question: "যাকাত সাধারণত সম্পদের কত অংশ?",
-    options: ["১%", "২.৫%", "৫%", "১০%"],
-    correctIndex: 1,
-    explanation: "নিসাব পরিমাণ সম্পদের উপর যাকাত ২.৫%।",
-    category: "Zakat",
-    difficulty: "medium",
-  },
-  {
-    id: 6,
-    question: "রাসূলুল্লাহ ﷺ এর জন্মস্থান কোন শহর?",
-    options: ["মদিনা", "তায়েফ", "মক্কা", "জেদ্দা"],
-    correctIndex: 2,
-    explanation: "রাসূলুল্লাহ ﷺ মক্কা নগরীতে জন্মগ্রহণ করেন।",
-    category: "Seerah",
-    difficulty: "easy",
-  },
-  {
-    id: 7,
-    question: "ইসলামে কোন মাসকে পবিত্র মাসগুলোর একটি বলা হয়?",
-    options: ["রজব", "শাবান", "রবিউল আউয়াল", "সফর"],
-    correctIndex: 0,
-    explanation: "রজব চারটি পবিত্র মাসের একটি।",
-    category: "Islamic Months",
-    difficulty: "medium",
-  },
-  {
-    id: 8,
-    question: "হজ ইসলামের কত নম্বর স্তম্ভ?",
-    options: ["তৃতীয়", "চতুর্থ", "পঞ্চম", "প্রথম"],
-    correctIndex: 2,
-    explanation: "সামর্থ্যবানদের জন্য হজ ইসলামের পঞ্চম স্তম্ভ।",
-    category: "Hajj",
-    difficulty: "easy",
-  },
-  {
-    id: 9,
-    question: "কোন সূরাকে কুরআনের হৃদয় বলা হয়?",
-    options: ["সূরা বাকারা", "সূরা ইয়াসিন", "সূরা রহমান", "সূরা মুলক"],
-    correctIndex: 1,
-    explanation: "হাদিসে সূরা ইয়াসিনকে কুরআনের হৃদয় বলা হয়েছে।",
-    category: "Quran",
-    difficulty: "hard",
-  },
-  {
-    id: 10,
-    question: "আজানের জবাব দেওয়া সম্পর্কে ইসলামের নির্দেশ কী?",
-    options: ["নিষিদ্ধ", "মাকরূহ", "সুন্নাহ", "ফরজ"],
-    correctIndex: 2,
-    explanation: "আজানের জবাব দেওয়া সুন্নাহ।",
-    category: "Sunnah",
-    difficulty: "medium",
-  },
-  {
-    id: 11,
-    question: "কুরআনের সর্ববৃহৎ সূরা কোনটি?",
-    options: ["সূরা ফাতিহা", "সূরা বাকারাহ", "সূরা নিসা", "সূরা কাহফ"],
-    correctIndex: 1,
-    explanation: "সূরা বাকারাহ কুরআনের দীর্ঘতম সূরা।",
-    category: "Quran",
-    difficulty: "easy",
-  },
-  {
-    id: 12,
-    question: "ইসলামে উত্তম চরিত্রকে কী নামে অভিহিত করা হয়?",
-    options: ["ইখলাস", "আখলাক", "ইহসান", "তাওবা"],
-    correctIndex: 1,
-    explanation: "আখলাক অর্থ উত্তম চরিত্র ও ব্যবহার।",
-    category: "Akhlaq",
-    difficulty: "medium",
-  },
-];
+const questionBank = questionsData as Question[];
 
 type ResultItem = UserResult & {
   options: [string, string, string, string];
@@ -188,12 +80,14 @@ export default function Home() {
   }
 
   function handleStart() {
-    const session = getUser() ?? { name: userName, seenQuestionIds: [] };
-    const unseenQuestions = getUnseenQuestions(questionBank, session);
-    const sourceQuestions = unseenQuestions.length >= TOTAL_QUESTIONS ? unseenQuestions : questionBank;
-    const randomQuestions = getRandomQuestions(sourceQuestions, TOTAL_QUESTIONS);
+    const session = getUser() ?? { name: userName, seenQuestionIds: [] }
+    const seenIds = session.seenQuestionIds
+    const stratifiedQuestions = getStratifiedQuestions(questionBank, seenIds, SESSION_SIZE)
+    
+    console.log("🔍 Stratified questions selected:", stratifiedQuestions.map(q => ({ id: q.id, category: q.category })))
+    console.log("📊 Question IDs after shuffle:", stratifiedQuestions.map(q => q.id))
 
-    setSessionQuestions(randomQuestions);
+    setSessionQuestions(stratifiedQuestions)
     setCurrentIndex(0);
     setScore(0);
     setSelectedAnswer(null);
@@ -257,7 +151,16 @@ export default function Home() {
     if (isLastQuestion) {
       const session = getUser() ?? { name: userName, seenQuestionIds: [] };
       const seenIds = sessionQuestions.map((question) => question.id);
+      
+      console.log("✅ Marking questions as seen:", seenIds)
+      console.log("📋 Total questions to mark:", seenIds.length)
+      
       markQuestionsSeen(seenIds, session);
+      
+      console.log("💾 Session saved, fetching updated user...")
+      const updatedSession = getUser()
+      console.log("📌 Updated seenQuestionIds in storage:", updatedSession?.seenQuestionIds)
+      
       setScreen("result");
       return;
     }
@@ -298,7 +201,7 @@ export default function Home() {
           <QuestionScreen
             question={currentQuestion}
             questionNumber={currentIndex + 1}
-            totalQuestions={TOTAL_QUESTIONS}
+            totalQuestions={SESSION_SIZE}
             selectedAnswer={selectedAnswer}
             isFeedback={selectedAnswer !== null}
             onAnswer={handleAnswer}

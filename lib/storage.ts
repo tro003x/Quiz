@@ -1,48 +1,49 @@
-import type { Question, UserSession } from "@/types/quiz";
+import type { Question, UserSession } from "@/types/quiz"
+import { SESSION_SIZE, RESET_THRESHOLD } from "./constants"
 
-const STORAGE_KEY = "quiz_user";
+const STORAGE_KEY = "quiz_user"
 
 function canUseStorage() {
-  return typeof window !== "undefined";
+  return typeof window !== "undefined"
 }
 
 export function getUser(): UserSession | null {
   if (!canUseStorage()) {
-    return null;
+    return null
   }
 
-  const rawSession = window.localStorage.getItem(STORAGE_KEY);
+  const rawSession = window.localStorage.getItem(STORAGE_KEY)
 
   if (!rawSession) {
-    return null;
+    return null
   }
 
   try {
-    return JSON.parse(rawSession) as UserSession;
+    return JSON.parse(rawSession) as UserSession
   } catch {
-    return null;
+    return null
   }
 }
 
 export function saveUser(session: UserSession): void {
   if (!canUseStorage()) {
-    return;
+    return
   }
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
 }
 
 export function saveName(name: string): void {
   if (!canUseStorage()) {
-    return;
+    return
   }
 
-  const currentSession = getUser();
+  const currentSession = getUser()
 
   saveUser({
     name,
     seenQuestionIds: currentSession?.seenQuestionIds ?? [],
-  });
+  })
 }
 
 export function getUnseenQuestions(
@@ -50,12 +51,13 @@ export function getUnseenQuestions(
   session: UserSession
 ): Question[] {
   if (!canUseStorage()) {
-    return all;
+    return all
   }
 
-  const seenIds = new Set(session.seenQuestionIds);
+  const unseenIds = all.filter(q => !session.seenQuestionIds.includes(q.id))
 
-  return all.filter((question) => !seenIds.has(question.id));
+  // If unseen count is less than SESSION_SIZE, reset cycle
+  return unseenIds.length >= SESSION_SIZE ? unseenIds : all
 }
 
 export function markQuestionsSeen(
@@ -63,19 +65,28 @@ export function markQuestionsSeen(
   session: UserSession
 ): UserSession {
   if (!canUseStorage()) {
-    return session;
+    return session
   }
+
+  console.log("🔖 Marking seen IDs:", ids)
+  console.log("📌 Current seenQuestionIds before:", session.seenQuestionIds)
 
   const seenQuestionIds = Array.from(
     new Set([...session.seenQuestionIds, ...ids])
-  );
+  )
+
+  console.log("📊 Total unique seen after merge:", seenQuestionIds.length, "IDs:", seenQuestionIds)
 
   const nextSession: UserSession = {
     ...session,
-    seenQuestionIds: seenQuestionIds.length >= 200 ? [] : seenQuestionIds,
-  };
+    seenQuestionIds: seenQuestionIds.length >= RESET_THRESHOLD ? [] : seenQuestionIds,
+  }
 
-  saveUser(nextSession);
+  console.log("♻️  Reset cycle triggered?", seenQuestionIds.length >= RESET_THRESHOLD)
 
-  return nextSession;
+  saveUser(nextSession)
+
+  console.log("💾 Saved to localStorage, updated seenQuestionIds:", nextSession.seenQuestionIds)
+
+  return nextSession
 }
