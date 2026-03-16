@@ -217,7 +217,15 @@ export default function ExplanationScreen({
                 lineHeight: "1.7",
               }}
             >
-              {renderExplanation(result.explanation)}
+              {renderExplanation(result.explanation).map((part, idx) =>
+                part.type === "bold" ? (
+                  <strong key={idx} style={{ fontWeight: 700 }}>
+                    {part.content}
+                  </strong>
+                ) : (
+                  <span key={idx}>{part.content}</span>
+                )
+              )}
             </p>
           </div>
 

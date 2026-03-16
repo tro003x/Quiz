@@ -137,3 +137,27 @@ export function getFeedbackMessage(score: number): string {
 
   return "আপনার আরো অনেককিছু জানা বাকি"
 }
+
+export type ExplanationPart = {
+  type: "text" | "bold";
+  content: string;
+};
+
+export function renderExplanation(text: string): ExplanationPart[] {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+
+  return parts
+    .filter((part) => part.length > 0)
+    .map((part) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return {
+          type: "bold" as const,
+          content: part.slice(2, -2),
+        };
+      }
+      return {
+        type: "text" as const,
+        content: part,
+      };
+    });
+}
