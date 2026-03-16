@@ -1,67 +1,78 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-import { Progress } from "@/components/ui/progress";
+"use client"
+import { useEffect, useRef, useState } from "react"
 
 interface TimerBarProps {
-  duration: 10;
-  onTimeout: () => void;
-  isActive: boolean;
+  duration: number
+  onTimeout: () => void
+  isActive: boolean
 }
 
-export default function TimerBar({
-  duration,
-  onTimeout,
-  isActive,
-}: TimerBarProps) {
-  const [timeLeft, setTimeLeft] = useState(duration);
+export default function TimerBar({ duration, onTimeout, isActive }: TimerBarProps) {
+  const [timeLeft, setTimeLeft] = useState(duration)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const hasTimedOut = useRef(false)
 
   useEffect(() => {
-    setTimeLeft(duration);
-  }, [duration]);
+    setTimeLeft(duration)
+    hasTimedOut.current = false
+  }, [duration])
 
   useEffect(() => {
     if (!isActive) {
-      return;
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      return
     }
 
-    if (timeLeft === 0) {
-      onTimeout();
-      return;
-    }
-
-    const intervalId = window.setInterval(() => {
-      setTimeLeft((currentTime) => {
-        if (currentTime <= 1) {
-          window.clearInterval(intervalId);
-          return 0;
+    intervalRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current!)
+          if (!hasTimedOut.current) {
+            hasTimedOut.current = true
+            onTimeout()
+          }
+          return 0
         }
-
-        return currentTime - 1;
-      });
-    }, 1000);
+        return prev - 1
+      })
+    }, 1000)
 
     return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [isActive, onTimeout, timeLeft]);
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [isActive, onTimeout])
 
-  const progressValue = (timeLeft / duration) * 100;
-  const indicatorClassName = timeLeft > 5 ? "bg-[#EAB308]" : "bg-[#ef4444]";
+  const percentage = (timeLeft / duration) * 100
+  const isUrgent = timeLeft <= 5
+  const color = isUrgent ? "#ef4444" : "#22c55e"
 
   return (
-    <div className="w-full space-y-2">
-      <div className="flex items-center justify-between text-sm font-medium text-[#fef3c7]">
-        <span>সময় বাকি</span>
+    <div style={{ marginBottom: "16px" }}>
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        marginBottom: "6px",
+        fontSize: "12px",
+        color: isUrgent ? "#ef4444" : "#86efac"
+      }}>
+        <span>সময় বাকি</span>
         <span>{timeLeft}s</span>
       </div>
-
-      <Progress
-        value={progressValue}
-        indicatorClassName={indicatorClassName}
-        className="h-3 bg-black/30"
-      />
+      <div style={{
+        width: "100%",
+        height: "6px",
+        background: "rgba(255,255,255,0.1)",
+        borderRadius: "100px",
+        overflow: "hidden"
+      }}>
+        <div style={{
+          height: "100%",
+          width: `${percentage}%`,
+          background: color,
+          borderRadius: "100px",
+          transition: "width 1s linear, background 0.3s ease"
+        }} />
+      </div>
     </div>
-  );
+  )
 }

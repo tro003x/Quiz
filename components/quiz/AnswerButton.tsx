@@ -2,15 +2,14 @@ import { cn } from "@/lib/utils";
 
 interface AnswerButtonProps {
   label: string;
-  state: "idle" | "correct" | "wrong";
+  state: "idle" | "selected";
   onClick: () => void;
   disabled: boolean;
 }
 
 const stateStyles = {
   idle: "glass-btn",
-  correct: "glass-btn glass-btn-correct",
-  wrong: "glass-btn glass-btn-wrong",
+  selected: "glass-btn glass-btn-selected",
 } satisfies Record<AnswerButtonProps["state"], string>;
 
 export default function AnswerButton({

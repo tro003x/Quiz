@@ -103,13 +103,25 @@ export function saveSessionToHistory(
   if (typeof window === "undefined") return
 
   const history = session.sessionHistory ?? []
+  
+  // Use ISO date format for consistency between server and client
+  const now = new Date()
+  const isoDate = now.toISOString().split("T")[0]
+  
+  // Format date in Bengali: "17 মার্চ 2026"
+  const bengaliMonths = [
+    "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল",
+    "মে", "জুন", "জুলাই", "আগস্ট",
+    "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"
+  ]
+  const day = now.getDate()
+  const month = bengaliMonths[now.getMonth()]
+  const year = now.getFullYear()
+  const formattedDate = `${day} ${month} ${year}`
+  
   const newRecord: SessionRecord = {
     sessionNumber: history.length + 1,
-    date: new Date().toLocaleDateString("bn-BD", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
+    date: formattedDate,
     score,
     total: results.length,
     results,

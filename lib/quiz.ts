@@ -106,17 +106,13 @@ export function getButtonState(
   selectedIndex: number | null,
   correctIndex: number,
   isFeedback: boolean
-): "idle" | "correct" | "wrong" {
+): "idle" | "selected" {
   if (!isFeedback) {
     return "idle"
   }
 
-  if (index === correctIndex) {
-    return "correct"
-  }
-
-  if (selectedIndex === index && selectedIndex !== correctIndex) {
-    return "wrong"
+  if (index === selectedIndex) {
+    return "selected"
   }
 
   return "idle"

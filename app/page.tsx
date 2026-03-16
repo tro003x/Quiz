@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import questionsData from "@/data/questions.json";
 
 import Footer from "@/components/layout/Footer";
-import KalimaHeader from "@/components/layout/KalimaHeader";
 import MarqueeBanner from "@/components/layout/MarqueeBanner";
 import Navbar from "@/components/layout/Navbar";
 import ExplanationScreen from "@/components/screens/ExplanationScreen";
@@ -12,23 +11,25 @@ import LoginScreen from "@/components/screens/LoginScreen";
 import QuestionScreen from "@/components/screens/QuestionScreen";
 import ResultCardModal from "@/components/screens/ResultCardModal";
 import StartScreen from "@/components/screens/StartScreen";
+import SessionHistoryModal from "@/components/screens/SessionHistoryModal";
 import { checkAnswer, getStratifiedQuestions } from "@/lib/quiz"
 import {
   getUnseenQuestions,
   getUser,
+  getSessionHistory,
   markQuestionsSeen,
   saveName,
+  saveSessionToHistory,
 } from "@/lib/storage"
 import { SESSION_SIZE } from "@/lib/constants"
-import type { AppState, Question, UserResult } from "@/types/quiz"
+import type { AppState, Question, UserResult, SessionRecord } from "@/types/quiz"
 
 const APP_NAME = "ইসলামিক কুইজ"
 
 const quizDescription =
   "কুরআন, হাদিস এবং ইসলামের মৌলিক জ্ঞানভিত্তিক প্রশ্নোত্তর কুইজ। প্রতিটি প্রশ্নে দ্রুত চিন্তা করুন এবং আপনার শেখা যাচাই করুন।";
 
-const marqueeText =
-  "ইলম অর্জন প্রতিটি মুসলিমের উপর ফরজ। আজকের কুইজে অংশ নিন, নিজেকে যাচাই করুন এবং নতুন কিছু শিখুন ইনশাআল্লাহ।";
+const marqueeText = "ইলম অর্জন প্রতিটি মুসলিমের উপর ফরজ। আজকের কুইজে অংশ নিন, নিজেকে যাচাই করুন এবং নতুন কিছু শিখুন। ইতিহাস জানুন, নিজেকে যাচাই করুন। মুসলিমবঙ্গ কুইজে আপনাকে স্বাগতম। ইনশাআল্লাহ।";
 
 const footerLinks = [
   { platform: "github", href: "https://github.com" },
@@ -45,6 +46,7 @@ type ResultItem = UserResult & {
 };
 
 export default function Home() {
+  const [isClient, setIsClient] = useState(false);
   const [screen, setScreen] = useState<AppState>("login");
   const [userName, setUserName] = useState("");
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
@@ -53,6 +55,9 @@ export default function Home() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [results, setResults] = useState<ResultItem[]>([]);
   const [timedOut, setTimedOut] = useState(false);
+  const [sessionHistory, setSessionHistory] = useState<SessionRecord[]>([]);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [viewingSession, setViewingSession] = useState<SessionRecord | null>(null);
 
   const currentQuestion = sessionQuestions[currentIndex];
 
@@ -62,11 +67,14 @@ export default function Home() {
   );
 
   useEffect(() => {
+    setIsClient(true);
     const session = getUser();
 
     if (session?.name) {
       setUserName(session.name);
       setScreen("start");
+      const history = getSessionHistory(session);
+      setSessionHistory(history);
       return;
     }
 
@@ -147,10 +155,22 @@ export default function Home() {
     const isLastQuestion = currentIndex >= sessionQuestions.length - 1;
 
     if (isLastQuestion) {
-      const session = getUser() ?? { name: userName, seenQuestionIds: [] };
-      const seenIds = sessionQuestions.map((question) => question.id);
+      const user = getUser() ?? { 
+        name: userName, 
+        seenQuestionIds: [],
+        sessionHistory: []
+      };
+      const sessionIds = sessionQuestions.map((question) => question.id);
       
-      markQuestionsSeen(seenIds, session);
+      markQuestionsSeen(sessionIds, user);
+      
+      // Save full session to history
+      const updatedUser = getUser() ?? user;
+      saveSessionToHistory(results, score, updatedUser);
+      
+      // Update sessionHistory state
+      const history = getSessionHistory(updatedUser);
+      setSessionHistory(history);
       
       setScreen("result");
       return;
@@ -180,13 +200,39 @@ export default function Home() {
     setSelectedAnswer(null)
     setResults([])
     setTimedOut(false)
+    setViewingSession(null)
     setScreen("question")
   }
 
+  const handleOpenHistory = () => {
+    setShowHistoryModal(true);
+  };
+
+  const handleCloseHistory = () => {
+    setShowHistoryModal(false);
+  };
+
+  const handleViewSession = (record: SessionRecord) => {
+    setViewingSession(record);
+    setShowHistoryModal(false);
+    setResults(record.results as ResultItem[]);
+    setScreen("explanation");
+  };
+
+  // Prevent rendering until client-side hydration is complete
+  if (!isClient) return null;
+
   return (
     <div className="flex min-h-screen flex-col">
-      <KalimaHeader />
-      <Navbar appName={APP_NAME} userName={userName || "অতিথি"} score={score} />
+      <Navbar 
+        userName={userName || "অতিথি"} 
+        score={score}
+        screen={screen}
+        sessionCount={sessionHistory.length}
+        onOpenHistory={handleOpenHistory}
+        onLogin={handleLogin}
+        onLogoClick={() => setScreen("start")}
+      />
       <MarqueeBanner text={marqueeText} />
 
       <main className="flex-1">
@@ -228,9 +274,20 @@ export default function Home() {
         ) : null}
 
         {screen === "explanation" ? (
-          <ExplanationScreen results={results} onRestart={handleRestart} />
+          <ExplanationScreen
+            results={viewingSession ? viewingSession.results : results}
+            onRestart={handleRestart}
+          />
         ) : null}
       </main>
+
+      {showHistoryModal && (
+        <SessionHistoryModal
+          history={sessionHistory}
+          onClose={handleCloseHistory}
+          onViewSession={handleViewSession}
+        />
+      )}
 
       <Footer name={userName || "আপনার নাম"} links={footerLinks} />
     </div>
