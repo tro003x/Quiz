@@ -42,7 +42,7 @@ export default function ExplanationScreen({
             return (
               <article
                 key={result.questionId}
-                className="rounded-3xl border border-[#EAB30833] bg-[#0f0c29]/88 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.35)]"
+                className="glass-card p-6"
               >
                 <div className="space-y-3">
                   <h3 className="text-lg font-bold leading-8 text-white sm:text-xl">
@@ -66,12 +66,10 @@ export default function ExplanationScreen({
                       <li
                         key={`${result.questionId}-${optionIndex}`}
                         className={cn(
-                          "rounded-xl border px-3 py-2 text-sm text-white/90",
-                          isCorrect
-                            ? "border-green-400/50 bg-green-600/25 text-green-100"
-                            : isWrongSelection
-                              ? "border-red-400/50 bg-red-600/25 text-red-100"
-                              : "border-white/10 bg-white/5"
+                          "glass-btn rounded-xl px-3 py-2 text-sm",
+                          isCorrect && "glass-btn-correct",
+                          isWrongSelection && "glass-btn-wrong",
+                          !isCorrect && !isWrongSelection && "border-white/10 bg-white/5 text-white/90"
                         )}
                       >
                         {option}

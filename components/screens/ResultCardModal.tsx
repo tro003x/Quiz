@@ -62,7 +62,7 @@ export default function ResultCardModal({
 
   return (
     <section className="flex min-h-[calc(100vh-10rem)] items-center justify-center bg-black/65 px-4 py-10">
-      <div className="w-full max-w-2xl rounded-[2rem] border border-[#EAB3084D] bg-[#0f0c29] p-8 text-center shadow-[0_30px_100px_rgba(0,0,0,0.55)] sm:p-10">
+      <div className="glass-modal w-full max-w-2xl p-8 text-center sm:p-10">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#EAB308]">
           ফলাফল
         </p>

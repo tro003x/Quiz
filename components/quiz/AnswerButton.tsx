@@ -8,9 +8,9 @@ interface AnswerButtonProps {
 }
 
 const stateStyles = {
-  idle: "border border-transparent bg-[#1a1a2e] text-white hover:border-[#EAB308]",
-  correct: "bg-green-600 text-white",
-  wrong: "bg-red-600 text-white",
+  idle: "glass-btn",
+  correct: "glass-btn glass-btn-correct",
+  wrong: "glass-btn glass-btn-wrong",
 } satisfies Record<AnswerButtonProps["state"], string>;
 
 export default function AnswerButton({
@@ -27,7 +27,7 @@ export default function AnswerButton({
       onClick={onClick}
       disabled={disabled || !isIdle}
       className={cn(
-        "w-full rounded-2xl px-4 py-3 text-left text-sm font-medium transition-colors sm:text-base",
+        "w-full px-4 py-3 text-left text-sm font-medium sm:text-base",
         stateStyles[state],
         !isIdle && "cursor-not-allowed",
         isIdle && "cursor-pointer"

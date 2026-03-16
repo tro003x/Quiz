@@ -29,8 +29,8 @@ const iconMap: Record<string, LucideIcon> = {
 
 export default function Footer({ name, links }: FooterProps) {
   return (
-    <footer className="w-full bg-[#0f0c29] px-4 py-6">
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 border-t border-[#EAB30866] pt-6 text-center">
+    <footer className="glass-navbar w-full px-4 py-6">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 border-t border-[rgba(255,255,255,0.08)] pt-6 text-center">
         <p className="text-lg font-bold text-white">{name}</p>
 
         <div className="flex flex-wrap items-center justify-center gap-3">

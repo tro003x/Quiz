@@ -20,7 +20,7 @@ export default function UpcomingPanel({
   return (
     <aside
       aria-hidden="true"
-      className="w-full max-w-[20rem] shrink-0"
+      className="glass-card w-full max-w-[20rem] shrink-0 p-0"
       style={{
         maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
         WebkitMaskImage:
@@ -31,7 +31,7 @@ export default function UpcomingPanel({
         {previewQuestions.map((question, index) => (
           <div
             key={question.id}
-            className="rounded-2xl border border-white/10 bg-[#11162b] p-4 text-white"
+            className="rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] p-4 text-white"
             style={{ opacity: previewOpacities[index] ?? 0.2 } as CSSProperties}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#EAB308]">

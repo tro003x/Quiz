@@ -12,7 +12,7 @@ export default function Navbar({
   score,
 }: NavbarProps) {
   return (
-    <nav className="h-16 w-full bg-[#0f0c29]">
+    <nav className="sticky top-0 z-50 h-16 w-full glass-navbar">
       <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-3 text-white">
           <MoonStar className="h-5 w-5 text-[#EAB308]" aria-hidden="true" />

@@ -13,4 +13,4 @@ export const CATEGORIES = [
 ] as const
 
 export const SESSION_SIZE = 15
-export const RESET_THRESHOLD = 200
+export const RESET_THRESHOLD = 100
