@@ -1,7 +1,10 @@
-import type { Question, UserSession } from "@/types/quiz"
+import type { Question, UserSession, UserResult, SessionRecord } from "@/types/quiz"
 import { SESSION_SIZE, RESET_THRESHOLD } from "./constants"
 
 const STORAGE_KEY = "quiz_user"
+
+// Re-export SessionRecord for convenience
+export type { SessionRecord }
 
 function canUseStorage() {
   return typeof window !== "undefined"
@@ -43,6 +46,7 @@ export function saveName(name: string): void {
   saveUser({
     name,
     seenQuestionIds: currentSession?.seenQuestionIds ?? [],
+    sessionHistory: currentSession?.sessionHistory ?? [],
   })
 }
 
@@ -89,4 +93,36 @@ export function markQuestionsSeen(
   console.log("💾 Saved to localStorage, updated seenQuestionIds:", nextSession.seenQuestionIds)
 
   return nextSession
+}
+
+export function saveSessionToHistory(
+  results: UserResult[],
+  score: number,
+  session: UserSession
+): void {
+  if (typeof window === "undefined") return
+
+  const history = session.sessionHistory ?? []
+  const newRecord: SessionRecord = {
+    sessionNumber: history.length + 1,
+    date: new Date().toLocaleDateString("bn-BD", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+    score,
+    total: results.length,
+    results,
+  }
+
+  const updated: UserSession = {
+    ...session,
+    sessionHistory: [...history, newRecord],
+  }
+
+  saveUser(updated)
+}
+
+export function getSessionHistory(session: UserSession): SessionRecord[] {
+  return session.sessionHistory ?? []
 }

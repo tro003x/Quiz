@@ -26,7 +26,16 @@ export interface UserResult {
   options: [string, string, string, string];
 }
 
+export interface SessionRecord {
+  sessionNumber: number;
+  date: string;
+  score: number;
+  total: number;
+  results: UserResult[];
+}
+
 export interface UserSession {
   name: string;
   seenQuestionIds: number[];
+  sessionHistory?: SessionRecord[];
 }
