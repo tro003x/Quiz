@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import { getFeedbackMessage } from "@/lib/quiz";
@@ -10,7 +10,8 @@ interface ResultCardModalProps {
   name: string;
   score: number;
   results: UserResult[];
-  onClose: () => void;
+  onShowExplanation: () => void;
+  onRestart: () => void;
 }
 
 const TOTAL_QUESTIONS = 10;
@@ -29,9 +30,9 @@ export default function ResultCardModal({
   name,
   score,
   results,
-  onClose,
+  onShowExplanation,
+  onRestart,
 }: ResultCardModalProps) {
-  const [copied, setCopied] = useState(false);
   const feedbackMessage = getFeedbackMessage(score);
 
   const dotStatuses = useMemo(() => {
@@ -43,22 +44,6 @@ export default function ResultCardModal({
 
     return mapped;
   }, [results]);
-
-  async function handleShare() {
-    if (typeof window === "undefined" || !navigator.clipboard) {
-      return;
-    }
-
-    const textToCopy = `${name} - স্কোর: ${score}/১০ - ${feedbackMessage}`;
-
-    try {
-      await navigator.clipboard.writeText(textToCopy);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  }
 
   return (
     <section className="flex min-h-[calc(100vh-10rem)] items-center justify-center bg-black/65 px-4 py-10">
@@ -91,23 +76,22 @@ export default function ResultCardModal({
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col gap-3 w-full">
           <Button
             type="button"
-            onClick={handleShare}
-            className="h-11 rounded-2xl bg-[#EAB308] px-6 font-semibold text-[#1a1200] hover:bg-[#facc15]"
+            onClick={onShowExplanation}
+            className="w-full h-14 rounded-xl bg-[#16a34a] px-6 py-3 text-base font-semibold text-white hover:bg-[#15803d]"
           >
-            {copied ? "কপি হয়েছে!" : "ফলাফল শেয়ার করুন"}
+            উত্তর দেখুন
           </Button>
 
-          <Button
+          <button
             type="button"
-            onClick={onClose}
-            variant="outline"
-            className="h-11 rounded-2xl border-[#EAB30866] bg-transparent px-6 text-[#fef3c7] hover:bg-[#EAB3081A]"
+            onClick={onRestart}
+            className="w-full h-14 rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.15)] px-6 py-3 text-base font-semibold text-white hover:bg-[rgba(255,255,255,0.1)]"
           >
-            বন্ধ করুন
-          </Button>
+            নতুন সেশন
+          </button>
         </div>
       </div>
     </section>

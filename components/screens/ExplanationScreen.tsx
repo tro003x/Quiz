@@ -1,102 +1,298 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+"use client";
+
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, CheckCircle, XCircle } from "lucide-react";
 import type { UserResult } from "@/types/quiz";
+import { renderExplanation } from "@/lib/quiz";
 
 interface ExplanationScreenProps {
   results: UserResult[];
   onRestart: () => void;
 }
 
-type ResultWithOptionalOptions = UserResult & {
-  options?: string[];
-};
-
-const fallbackOptions = ["অপশন ১", "অপশন ২", "অপশন ৩", "অপশন ৪"];
-
-function getOptions(result: ResultWithOptionalOptions): string[] {
-  if (result.options && result.options.length === 4) {
-    return result.options;
-  }
-
-  return fallbackOptions;
-}
-
 export default function ExplanationScreen({
   results,
   onRestart,
 }: ExplanationScreenProps) {
-  const limitedResults = results.slice(0, 10);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">("left");
+  const [animating, setAnimating] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const goNext = () => {
+    if (currentSlide >= results.length - 1 || animating) return;
+    setSlideDirection("left");
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => prev + 1);
+      setAnimating(false);
+    }, 300);
+  };
+
+  const goPrev = () => {
+    if (currentSlide <= 0 || animating) return;
+    setSlideDirection("right");
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => prev - 1);
+      setAnimating(false);
+    }, 300);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 50) goNext();
+    if (diff < -50) goPrev();
+  };
+
+  const result = results[currentSlide];
+
+  if (!result) return null;
 
   return (
-    <section className="min-h-[calc(100vh-10rem)] overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-4xl space-y-6">
-        <h2 className="text-center text-3xl font-bold text-white sm:text-4xl">
-          প্রশ্নের ব্যাখ্যা
-        </h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px",
+        position: "relative",
+      }}
+    >
+      <p
+        style={{
+          color: "#22c55e",
+          fontSize: "13px",
+          fontWeight: "600",
+          marginBottom: "32px",
+          letterSpacing: "0.05em",
+        }}
+      >
+        ব্যাখ্যা {currentSlide + 1}/{results.length}
+      </p>
 
-        <div className="space-y-4">
-          {limitedResults.map((result, index) => {
-            const withOptions = result as ResultWithOptionalOptions;
-            const options = getOptions(withOptions);
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          maxWidth: "680px",
+        }}
+      >
+        <button
+          onClick={goPrev}
+          disabled={currentSlide === 0}
+          className="hidden md:flex"
+          style={{
+            position: "absolute",
+            left: "-60px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            opacity: currentSlide === 0 ? 0.2 : 1,
+            background: "none",
+            border: "none",
+            cursor: currentSlide === 0 ? "not-allowed" : "pointer",
+            transition: "opacity 0.3s",
+          }}
+        >
+          <ChevronLeft size={32} color="#22c55e" />
+        </button>
 
-            return (
-              <article
-                key={result.questionId}
-                className="glass-card p-6"
-              >
-                <div className="space-y-3">
-                  <h3 className="text-lg font-bold leading-8 text-white sm:text-xl">
-                    প্রশ্ন {index + 1}: {result.question}
-                  </h3>
-
-                  {result.timedOut ? (
-                    <p className="inline-flex rounded-full border border-gray-400/40 bg-gray-500/20 px-3 py-1 text-xs font-semibold text-gray-200">
-                      সময় শেষ হয়ে গেছে
-                    </p>
-                  ) : null}
-                </div>
-
-                <ul className="mt-4 space-y-2">
-                  {options.map((option, optionIndex) => {
-                    const isCorrect = optionIndex === result.correctIndex;
-                    const isWrongSelection =
-                      result.selectedIndex === optionIndex && !result.isCorrect;
-
-                    return (
-                      <li
-                        key={`${result.questionId}-${optionIndex}`}
-                        className={cn(
-                          "glass-btn rounded-xl px-3 py-2 text-sm",
-                          isCorrect && "glass-btn-correct",
-                          isWrongSelection && "glass-btn-wrong",
-                          !isCorrect && !isWrongSelection && "border-white/10 bg-white/5 text-white/90"
-                        )}
-                      >
-                        {option}
-                      </li>
-                    );
-                  })}
-                </ul>
-
-                <p className="mt-4 text-sm leading-7 text-[#fef3c7]/75">
-                  {result.explanation}
-                </p>
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="flex justify-center pt-2">
-          <Button
-            type="button"
-            size="lg"
-            onClick={onRestart}
-            className="h-12 rounded-2xl bg-[#EAB308] px-8 font-semibold text-[#1a1200] hover:bg-[#facc15]"
+        <div
+          key={currentSlide}
+          className={`glass-card-strong ${
+            slideDirection === "left" ? "slide-from-right" : "slide-from-left"
+          }`}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          style={{
+            padding: "32px",
+            minHeight: "480px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <p
+            style={{
+              color: "#22c55e",
+              fontSize: "13px",
+              fontWeight: "600",
+              marginBottom: "8px",
+              letterSpacing: "0.05em",
+            }}
           >
-            নতুন সেশন শুরু করুন
-          </Button>
+            প্রশ্ন {currentSlide + 1}
+          </p>
+          <h3
+            style={{
+              color: "white",
+              fontSize: "18px",
+              fontWeight: "600",
+              marginBottom: "24px",
+              lineHeight: "1.6",
+            }}
+          >
+            {result.question}
+          </h3>
+
+          <div style={{ marginBottom: "24px", flex: 1 }}>
+            {result.options?.map((option, index) => {
+              const optionIsCorrect = index === result.correctIndex;
+              const userSelectedWrong =
+                index === result.selectedIndex && !result.isCorrect;
+
+              return (
+                <div
+                  key={index}
+                  style={{
+                    padding: "12px 16px",
+                    borderRadius: "10px",
+                    marginBottom: "8px",
+                    border: "1px solid",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    background: optionIsCorrect
+                      ? "rgba(34,197,94,0.15)"
+                      : userSelectedWrong
+                        ? "rgba(239,68,68,0.15)"
+                        : "rgba(255,255,255,0.04)",
+                    borderColor: optionIsCorrect
+                      ? "rgba(34,197,94,0.5)"
+                      : userSelectedWrong
+                        ? "rgba(239,68,68,0.5)"
+                        : "rgba(255,255,255,0.1)",
+                    color: optionIsCorrect
+                      ? "#86efac"
+                      : userSelectedWrong
+                        ? "#fca5a5"
+                        : "#d1d5db",
+                  }}
+                >
+                  {optionIsCorrect && (
+                    <CheckCircle size={16} color="#22c55e" />
+                  )}
+                  {userSelectedWrong && <XCircle size={16} color="#ef4444" />}
+                  {result.timedOut && optionIsCorrect && (
+                    <span style={{ fontSize: "11px", color: "#f59e0b", fontWeight: "600" }}>
+                      ⏱ সময় শেষ
+                    </span>
+                  )}
+                  {option}
+                </div>
+              );
+            })}
+          </div>
+
+          <div
+            style={{
+              marginTop: "24px",
+              padding: "16px",
+              background: "rgba(255,255,255,0.04)",
+              borderRadius: "12px",
+              borderLeft: "3px solid #22c55e",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "13px",
+                color: "#6b7280",
+                marginBottom: "6px",
+                fontWeight: "600",
+              }}
+            >
+              ব্যাখ্যা
+            </p>
+            <p
+              style={{
+                fontSize: "14px",
+                color: "#d1fae5",
+                lineHeight: "1.7",
+              }}
+            >
+              {renderExplanation(result.explanation)}
+            </p>
+          </div>
+
+          {currentSlide === results.length - 1 && (
+            <button
+              onClick={onRestart}
+              style={{
+                width: "100%",
+                marginTop: "24px",
+                padding: "14px",
+                borderRadius: "10px",
+                background: "#16a34a",
+                color: "white",
+                border: "none",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "background 0.3s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = "#15803d";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = "#16a34a";
+              }}
+            >
+              নতুন সেশন শুরু করুন
+            </button>
+          )}
         </div>
+
+        <button
+          onClick={goNext}
+          disabled={currentSlide === results.length - 1}
+          className="hidden md:flex"
+          style={{
+            position: "absolute",
+            right: "-60px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            opacity: currentSlide === results.length - 1 ? 0.2 : 1,
+            background: "none",
+            border: "none",
+            cursor: currentSlide === results.length - 1 ? "not-allowed" : "pointer",
+            transition: "opacity 0.3s",
+          }}
+        >
+          <ChevronRight size={32} color="#22c55e" />
+        </button>
       </div>
-    </section>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          marginTop: "32px",
+          justifyContent: "center",
+        }}
+      >
+        {results.map((_, i) => (
+          <button
+            key={i}
+            style={{
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              background: i === currentSlide ? "#22c55e" : "rgba(255,255,255,0.2)",
+              transition: "background 0.3s",
+              cursor: "pointer",
+              border: "none",
+              padding: 0,
+            }}
+            onClick={() => !animating && setCurrentSlide(i)}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

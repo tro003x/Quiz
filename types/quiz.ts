@@ -23,6 +23,7 @@ export interface UserResult {
   isCorrect: boolean;
   timedOut: boolean;
   explanation: string;
+  options: [string, string, string, string];
 }
 
 export interface UserSession {

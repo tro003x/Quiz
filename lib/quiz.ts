@@ -24,55 +24,58 @@ export function getStratifiedQuestions(
   seenIds: number[],
   sessionSize: number = SESSION_SIZE
 ): Question[] {
-  // Step 1: Filter out already seen questions
+
+  // Step 1: Filter unseen, fallback to all if cycle complete
   const unseen = allQuestions.filter(q => !seenIds.includes(q.id))
+  const pool = unseen.length >= sessionSize ? unseen : [...allQuestions]
 
-  // Step 2: If unseen questions are less than sessionSize,
-  // reset and use all questions (full cycle completed)
-  const pool = unseen.length >= sessionSize ? unseen : allQuestions
+  // Step 2: Group by category
+  const grouped: Record<string, Question[]> = {}
+  for (const q of pool) {
+    const cat = q.category.trim()
+    if (!grouped[cat]) grouped[cat] = []
+    grouped[cat].push(q)
+  }
 
-  console.log("🎯 Unseen questions available:", unseen.length)
-  console.log("📚 Question pool size:", pool.length)
-  console.log("🔄 Reset cycle?", unseen.length < sessionSize)
-
-  // Step 3: Group pool by category
-  const grouped = groupByCategory(pool)
-  const categories = Object.keys(grouped)
-
-  console.log("📂 Unique categories found:", categories)
-  console.log("📊 Distribution by category:", Object.entries(grouped).map(([cat, qs]) => `${cat}: ${qs.length}`))
+  // Step 3: Shuffle questions within each category
+  for (const cat in grouped) {
+    grouped[cat] = shuffleArray(grouped[cat])
+  }
 
   const selected: Question[] = []
   const selectedIds = new Set<number>()
 
-  // Step 4: Phase 1 — pick 1 guaranteed from each category
-  for (const category of categories) {
-    const categoryQuestions = pool.filter(q => q.category.trim() === category)
-    const shuffled = shuffleArray(categoryQuestions)
-    const pick = shuffled.find(q => !selectedIds.has(q.id))
+  // Step 4: Phase 1 — pick 1 from each category
+  // BUT stop if we already hit sessionSize
+  const categories = Object.keys(grouped)
+  for (const cat of categories) {
+    if (selected.length >= sessionSize) break
+    const pick = grouped[cat].find(q => !selectedIds.has(q.id))
     if (pick) {
       selected.push(pick)
       selectedIds.add(pick.id)
     }
   }
 
-  console.log("✅ Phase 1 (guaranteed per category):", selected.map(q => q.id))
-
-  // Step 5: Phase 2 — fill remaining slots randomly from entire pool
-  const remaining = pool.filter(q => !selectedIds.has(q.id))
-  const shuffledRemaining = shuffleArray(remaining)
+  // Step 5: Phase 2 — fill remaining slots if Phase 1 
+  // didn't reach sessionSize (fewer categories than sessionSize)
   const needed = sessionSize - selected.length
-
-  for (let i = 0; i < needed && i < shuffledRemaining.length; i++) {
-    selected.push(shuffledRemaining[i])
-    selectedIds.add(shuffledRemaining[i].id)
+  if (needed > 0) {
+    const remaining = shuffleArray(
+      pool.filter(q => !selectedIds.has(q.id))
+    )
+    for (let i = 0; i < needed && i < remaining.length; i++) {
+      selected.push(remaining[i])
+      selectedIds.add(remaining[i].id)
+    }
   }
 
-  console.log("🎲 Phase 2 (random fill) added:", shuffledRemaining.slice(0, needed).map(q => q.id))
+  // Step 6: Final shuffle and hard slice to guarantee exact count
+  const final = shuffleArray(selected).slice(0, sessionSize)
 
-  // Step 6: Final shuffle so guaranteed picks aren't always first
-  const final = shuffleArray(selected)
-  console.log("🔀 Final shuffled order:", final.map(q => q.id))
+  console.log("✅ Final session size:", final.length)
+  console.log("📂 Categories in session:", [...new Set(final.map(q => q.category))])
+
   return final
 }
 

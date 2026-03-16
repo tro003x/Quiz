@@ -83,9 +83,7 @@ export default function Home() {
     const session = getUser() ?? { name: userName, seenQuestionIds: [] }
     const seenIds = session.seenQuestionIds
     const stratifiedQuestions = getStratifiedQuestions(questionBank, seenIds, SESSION_SIZE)
-    
-    console.log("🔍 Stratified questions selected:", stratifiedQuestions.map(q => ({ id: q.id, category: q.category })))
-    console.log("📊 Question IDs after shuffle:", stratifiedQuestions.map(q => q.id))
+
 
     setSessionQuestions(stratifiedQuestions)
     setCurrentIndex(0);
@@ -152,14 +150,7 @@ export default function Home() {
       const session = getUser() ?? { name: userName, seenQuestionIds: [] };
       const seenIds = sessionQuestions.map((question) => question.id);
       
-      console.log("✅ Marking questions as seen:", seenIds)
-      console.log("📋 Total questions to mark:", seenIds.length)
-      
       markQuestionsSeen(seenIds, session);
-      
-      console.log("💾 Session saved, fetching updated user...")
-      const updatedSession = getUser()
-      console.log("📌 Updated seenQuestionIds in storage:", updatedSession?.seenQuestionIds)
       
       setScreen("result");
       return;
@@ -175,7 +166,21 @@ export default function Home() {
   }
 
   function handleRestart() {
-    setScreen("start");
+    const session = getUser() ?? { name: userName, seenQuestionIds: [] }
+    const seenIds = session.seenQuestionIds
+    const stratifiedQuestions = getStratifiedQuestions(
+      questionBank, 
+      seenIds, 
+      SESSION_SIZE
+    )
+    
+    setSessionQuestions(stratifiedQuestions)
+    setCurrentIndex(0)
+    setScore(0)
+    setSelectedAnswer(null)
+    setResults([])
+    setTimedOut(false)
+    setScreen("question")
   }
 
   return (
@@ -217,7 +222,8 @@ export default function Home() {
             name={userName || "অতিথি"}
             score={score}
             results={results}
-            onClose={handleCloseResult}
+            onShowExplanation={handleCloseResult}
+            onRestart={handleRestart}
           />
         ) : null}
 

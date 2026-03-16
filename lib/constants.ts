@@ -12,5 +12,5 @@ export const CATEGORIES = [
   "মুসলিম অধিকার ও সংগ্রাম",
 ] as const
 
-export const SESSION_SIZE = 15
+export const SESSION_SIZE = 10
 export const RESET_THRESHOLD = 100

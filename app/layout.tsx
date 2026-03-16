@@ -27,7 +27,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="bg-orb bg-orb-1" />
+        <div className="bg-orb bg-orb-2" />
+        <div className="bg-orb bg-orb-3" />
+        <main style={{ position: "relative", zIndex: 1 }}>
+          {children}
+        </main>
       </body>
     </html>
   );
