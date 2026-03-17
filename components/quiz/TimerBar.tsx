@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
+import { bn } from "@/lib/utils"
 
 interface TimerBarProps {
   duration: number
@@ -7,29 +8,61 @@ interface TimerBarProps {
   isActive: boolean
 }
 
-export default function TimerBar({ duration, onTimeout, isActive }: TimerBarProps) {
+export default function TimerBar({ 
+  duration, 
+  onTimeout, 
+  isActive 
+}: TimerBarProps) {
   const [timeLeft, setTimeLeft] = useState(duration)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const hasTimedOut = useRef(false)
+  const onTimeoutRef = useRef(onTimeout)
+  const isActiveRef = useRef(isActive) // Track isActive in ref for immediate checks
 
+  // Keep refs fresh
+  useEffect(() => {
+    onTimeoutRef.current = onTimeout
+  }, [onTimeout])
+
+  useEffect(() => {
+    isActiveRef.current = isActive
+  }, [isActive])
+
+  // Reset when duration changes (new question)
   useEffect(() => {
     setTimeLeft(duration)
     hasTimedOut.current = false
   }, [duration])
 
+  // Start/stop based on isActive
   useEffect(() => {
+    // If not active, clear immediately
     if (!isActive) {
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
       return
     }
 
+    // Start interval
     intervalRef.current = setInterval(() => {
+      // Check isActive ref first — stop immediately if false
+      if (!isActiveRef.current) {
+        clearInterval(intervalRef.current!)
+        intervalRef.current = null
+        return
+      }
+
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(intervalRef.current!)
+          intervalRef.current = null
           if (!hasTimedOut.current) {
             hasTimedOut.current = true
-            onTimeout()
+            setTimeout(() => {
+              onTimeoutRef.current()
+            }, 0)
           }
           return 0
         }
@@ -38,9 +71,12 @@ export default function TimerBar({ duration, onTimeout, isActive }: TimerBarProp
     }, 1000)
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
     }
-  }, [isActive, onTimeout])
+  }, [isActive])
 
   const percentage = (timeLeft / duration) * 100
   const isUrgent = timeLeft <= 5
@@ -48,15 +84,15 @@ export default function TimerBar({ duration, onTimeout, isActive }: TimerBarProp
 
   return (
     <div style={{ marginBottom: "16px" }}>
-      <div style={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
         marginBottom: "6px",
         fontSize: "12px",
         color: isUrgent ? "#ef4444" : "#86efac"
       }}>
         <span>সময় বাকি</span>
-        <span>{timeLeft}s</span>
+        <span>{bn(timeLeft)}s</span>
       </div>
       <div style={{
         width: "100%",

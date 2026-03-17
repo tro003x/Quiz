@@ -164,11 +164,11 @@ export default function Home() {
       
       markQuestionsSeen(sessionIds, user);
       
-      // Save full session to history
+      
       const updatedUser = getUser() ?? user;
       saveSessionToHistory(results, score, updatedUser);
       
-      // Update sessionHistory state
+      
       const history = getSessionHistory(updatedUser);
       setSessionHistory(history);
       
@@ -186,6 +186,7 @@ export default function Home() {
   }
 
   function handleRestart() {
+    setViewingSession(null)
     const session = getUser() ?? { name: userName, seenQuestionIds: [] }
     const seenIds = session.seenQuestionIds
     const stratifiedQuestions = getStratifiedQuestions(
@@ -200,8 +201,12 @@ export default function Home() {
     setSelectedAnswer(null)
     setResults([])
     setTimedOut(false)
-    setViewingSession(null)
     setScreen("question")
+  }
+
+  function handleGoHome() {
+    setViewingSession(null)
+    setScreen("start")
   }
 
   const handleOpenHistory = () => {
@@ -219,7 +224,7 @@ export default function Home() {
     setScreen("explanation");
   };
 
-  // Prevent rendering until client-side hydration is complete
+ 
   if (!isClient) return null;
 
   return (
@@ -277,6 +282,7 @@ export default function Home() {
           <ExplanationScreen
             results={viewingSession ? viewingSession.results : results}
             onRestart={handleRestart}
+            onGoHome={handleGoHome}
           />
         ) : null}
       </main>

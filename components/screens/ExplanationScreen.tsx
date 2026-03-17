@@ -1,18 +1,21 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, CheckCircle, XCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Home } from "lucide-react";
+import { bn } from "@/lib/utils";
 import type { UserResult } from "@/types/quiz";
 import { renderExplanation } from "@/lib/quiz";
 
 interface ExplanationScreenProps {
   results: UserResult[];
   onRestart: () => void;
+  onGoHome: () => void;
 }
 
 export default function ExplanationScreen({
   results,
   onRestart,
+  onGoHome,
 }: ExplanationScreenProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"left" | "right">("left");
@@ -76,7 +79,7 @@ export default function ExplanationScreen({
           letterSpacing: "0.05em",
         }}
       >
-        ব্যাখ্যা {currentSlide + 1}/{results.length}
+        ব্যাখ্যা {bn(currentSlide + 1)}/{bn(results.length)}
       </p>
 
       <div
@@ -128,7 +131,7 @@ export default function ExplanationScreen({
               letterSpacing: "0.05em",
             }}
           >
-            প্রশ্ন {currentSlide + 1}
+            প্রশ্ন {bn(currentSlide + 1)}
           </p>
           <h3
             style={{
@@ -275,6 +278,35 @@ export default function ExplanationScreen({
           <ChevronRight size={32} color="#22c55e" />
         </button>
       </div>
+
+      <button
+        onClick={onGoHome}
+        style={{
+          marginTop: "24px",
+          background: "transparent",
+          border: "1px solid rgba(255,255,255,0.2)",
+          borderRadius: "100px",
+          padding: "10px 28px",
+          color: "rgba(255,255,255,0.7)",
+          fontSize: "14px",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = "rgba(34,197,94,0.5)";
+          e.currentTarget.style.color = "#22c55e";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
+          e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+        }}
+      >
+        <Home size={15} />
+        ফিরে যান
+      </button>
 
       <div
         style={{

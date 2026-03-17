@@ -49,7 +49,7 @@ export default function QuestionScreen({
                 totalQuestions={totalQuestions}
               />
 
-              <TimerBar
+          <TimerBar
                 key={question.id}
                 duration={10}
                 isActive={selectedAnswer === null && !timedOut}

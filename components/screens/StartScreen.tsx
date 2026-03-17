@@ -8,9 +8,9 @@ interface StartScreenProps {
 }
 
 const stats = [
-  { label: "२००+ प्रश्न", icon: BookOpen },
-  { label: "१० सेकंड", icon: Clock },
-  { label: "प्रति सेशनमा १०टी प्रश्न", icon: ListTodo },
+  { label: "১০০+ প্রশ্ন", icon: BookOpen },
+  { label: "১০ সেকেন্ড", icon: Clock },
+  { label: "প্রতি সেশনে ১০টি প্রশ্ন", icon: ListTodo },
 ];
 
 const styles = `

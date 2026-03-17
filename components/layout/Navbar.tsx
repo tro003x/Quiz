@@ -1,3 +1,8 @@
+"use client"
+
+import { useState, useEffect, useRef } from "react";
+import { ChevronDown, Trophy } from "lucide-react";
+import { bn } from "@/lib/utils";
 import type { AppState } from "@/types/quiz";
 
 interface NavbarProps {
@@ -21,6 +26,24 @@ export default function Navbar({
 }: NavbarProps) {
   const isLoggedIn = userName && userName !== "অতিথি";
   const isInQuizScreen = screen === "question";
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   return (
     <nav
@@ -99,7 +122,7 @@ export default function Navbar({
           style={{
             background: "transparent",
             border: "1px solid rgba(255,255,255,0.2)",
-            borderRadius: "100px",
+            borderRadius: "15px",
             padding: "7px 18px",
             display: "flex",
             gap: "8px",
@@ -120,25 +143,87 @@ export default function Navbar({
             el.style.color = "rgba(255,255,255,0.8)";
           }}
         >
-          <span style={{ fontWeight: "500" }}>
-            {isInQuizScreen ? `স্কোর: ${score}` : `${sessionCount} সেশন সম্পন্ন`}
+          <span style={{ fontWeight: "600" }}>
+            আমার দ্বীন আমার যমীন
           </span>
         </div>
 
-        {/* RIGHT SECTION: Login or User info */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          {!isLoggedIn ? (
+        {/* RIGHT SECTION: Login or User Dropdown */}
+        {!isLoggedIn ? (
+          <button
+            onClick={onLogin}
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.2)",
+              borderRadius: "15px",
+              padding: "8px 20px",
+              color: "white",
+              fontSize: "14px",
+              cursor: "pointer",
+              transition: "all 0.3s",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget;
+              el.style.borderColor = "rgba(34,197,94,0.5)";
+              el.style.color = "#22c55e";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget;
+              el.style.borderColor = "rgba(255,255,255,0.2)";
+              el.style.color = "white";
+            }}
+          >
+            Login
+          </button>
+        ) : (
+          <div
+            ref={dropdownRef}
+            className="nav-dropdown"
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            {/* Avatar Circle */}
+            <div
+              style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #16a34a, #15803d)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span
+                style={{
+                  color: "white",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                }}
+              >
+                {userName.charAt(0)}
+              </span>
+            </div>
+
+            {/* Dropdown Button */}
             <button
-              onClick={onLogin}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
               style={{
                 background: "transparent",
                 border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: "100px",
-                padding: "8px 20px",
-                color: "white",
+                borderRadius: "10px",
+                padding: "7px 18px",
                 fontSize: "14px",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                gap: "20px",
                 cursor: "pointer",
-                transition: "all 0.3s",
+                transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget;
@@ -151,78 +236,69 @@ export default function Navbar({
                 el.style.color = "white";
               }}
             >
-              লগইন
-            </button>
-          ) : (
-            <>
-              {/* Score History Button */}
-              <button
-                onClick={onOpenHistory}
+              <span style={{ maxWidth: "100px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {userName}
+              </span>
+              <ChevronDown
+                size={16}
                 style={{
-                  background: "transparent",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  borderRadius: "100px",
-                  padding: "7px 18px",
-                  color: "#22c55e",
-                  fontSize: "13px",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "border-color 0.2s, color 0.2s",
+                  transition: "transform 0.2s",
+                  transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
                 }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "rgba(34,197,94,0.5)";
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "rgba(255,255,255,0.2)";
+              />
+            </button>
+
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 8px)",
+                  right: 0,
+                  background: "rgba(5, 20, 10, 0.95)",
+                  backdropFilter: "blur(20px)",
+                  border: "1px solid rgba(34,197,94,0.15)",
+                  borderRadius: "16px",
+                  padding: "4px",
+                  minWidth: "150px",
+                  zIndex: 100,
                 }}
               >
-                আপনার স্কোর
-              </button>
-
-              {/* User Avatar + Name */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                {/* Avatar Circle */}
-                <div
+                <button
+                  onClick={() => {
+                    onOpenHistory();
+                    setDropdownOpen(false);
+                  }}
                   style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, #16a34a, #15803d)",
+                    width: "100%",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "white",
-                      fontSize: "13px",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {userName.charAt(0)}
-                  </span>
-                </div>
-                {/* User Name */}
-                <span
-                  style={{
-                    color: "white",
+                    gap: "10px",
+                    color: "#22c55e",
+                    borderRadius: "10px",
+                    padding: "10px 14px",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
                     fontSize: "14px",
-                    fontWeight: "500",
-                    maxWidth: "120px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.background = "rgba(34,197,94,0.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.background = "transparent";
                   }}
                 >
-                  {userName}
-                </span>
+                  <Trophy size={18} />
+                  <span>আপনার স্কোর</span>
+                </button>
               </div>
-            </>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

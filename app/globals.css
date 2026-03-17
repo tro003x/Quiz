@@ -178,6 +178,11 @@ html {
 body {
   min-height: 100vh;
   background: linear-gradient(135deg, #020c07, #041a0e, #061f10);
+  font-family: var(--font-hind-siliguri), "Hind Siliguri", "Times New Roman", Times, serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-hind-siliguri), "Hind Siliguri", "Times New Roman", Times, serif;
 }
 
 /* Decorative background orbs */
