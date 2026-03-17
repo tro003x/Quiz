@@ -134,13 +134,14 @@ export default function Navbar({
           }}
           onMouseEnter={(e) => {
             const el = e.currentTarget;
-            el.style.borderColor = "rgba(34,197,94,0.5)";
-            el.style.color = "#22c55e";
+            el.style.borderColor = "rgba(255,255,255,0.2)";
+            el.style.color = "rgba(255,255,255,0.8)";
           }}
           onMouseLeave={(e) => {
             const el = e.currentTarget;
-            el.style.borderColor = "rgba(255,255,255,0.2)";
-            el.style.color = "rgba(255,255,255,0.8)";
+            el.style.borderColor = "rgba(34,197,94,0.5)";
+            el.style.color = "#22c55e";
+            
           }}
         >
           <span style={{ fontWeight: "600" }}>
