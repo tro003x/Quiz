@@ -121,27 +121,24 @@ export default function Navbar({
           className="hidden md:flex"
           style={{
             background: "transparent",
-            border: "1px solid rgba(255,255,255,0.2)",
+            border: "1px solid rgba(34,197,94,0.5)",
             borderRadius: "15px",
             padding: "7px 18px",
             display: "flex",
             gap: "8px",
             alignItems: "center",
             fontSize: "13px",
-            color: "rgba(255,255,255,0.8)",
+            color: "#22c55e",
             transition: "border-color 0.2s, color 0.2s",
             cursor: "default"
           }}
           onMouseEnter={(e) => {
-            const el = e.currentTarget;
-            el.style.borderColor = "rgba(255,255,255,0.2)";
-            el.style.color = "rgba(255,255,255,0.8)";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"
+            e.currentTarget.style.color = "rgba(255,255,255,0.9)"
           }}
           onMouseLeave={(e) => {
-            const el = e.currentTarget;
-            el.style.borderColor = "rgba(34,197,94,0.5)";
-            el.style.color = "#22c55e";
-            
+            e.currentTarget.style.borderColor = "rgba(34,197,94,0.5)"
+            e.currentTarget.style.color = "#22c55e"
           }}
         >
           <span style={{ fontWeight: "600" }}>
