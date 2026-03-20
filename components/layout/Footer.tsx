@@ -53,7 +53,7 @@ export default function Footer({ name, links }: FooterProps) {
         </div>
 
         <p className="text-xs text-[#fef3c7]/75">
-          সর্বস্বত্ব সংরক্ষিত © {new Date().getFullYear()}
+          All Rights Reserved © {new Date().getFullYear()}
         </p>
       </div>
     </footer>

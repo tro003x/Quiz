@@ -88,7 +88,7 @@ export default function SessionHistoryModal({
                 margin: 0,
               }}
             >
-              {sortedHistory.length}টি সেশন সম্পন্ন হয়েছে
+              {sortedHistory.length} টি সেশন সম্পন্ন হয়েছে
             </p>
           </div>
 

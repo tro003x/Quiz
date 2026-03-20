@@ -13,7 +13,7 @@ export default function StartScreen({
   onStart,
   onLoginRequest,
 }: StartScreenProps) {
-  // VERSION A — Logged out (userName is empty)
+  //  Logged out
   if (!userName || userName.trim() === "") {
     return (
       <section style={{
@@ -41,7 +41,7 @@ export default function StartScreen({
             marginBottom: "0",
             lineHeight: 1.2,
           }}>
-            ইতিহাস জানুন,
+            এই দ্বীন আমার,
           </h1>
 
           <h2 style={{
@@ -52,7 +52,7 @@ export default function StartScreen({
             marginBottom: "20px",
             lineHeight: 1.2,
           }}>
-            নিজেকে যাচাই করুন।
+            এই যমীন আমার।
           </h2>
 
           <p style={{
@@ -62,7 +62,7 @@ export default function StartScreen({
             marginBottom: "32px",
             lineHeight: 1.6,
           }}>
-            কুরআন, হাদিস এবং ইসলামের মৌলিক জ্ঞানভিত্তিক প্রশ্নোত্তর কুইজ। প্রতিটি প্রশ্নে দ্রুত চিন্তা করুন এবং আপনার শেখা যাচাই করুন।
+            বাংলার এই যমীন আমাদের। এই যমীনের গায়ে লেগে আছে আমাদের শত-সহস্র বছরের স্বর্ণালী ইতিহাসের সুঘ্রান। আমরা ঠিক কতটা জানি আমাদের এই বাংলাকে? কতটা জানি বাংলার মানুষের দ্বীনকে? এই কুইজ দিয়েই যাচাই হয়ে যাক.... 
           </p>
 
           <div style={{
