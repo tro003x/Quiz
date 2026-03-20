@@ -37,17 +37,21 @@ export function saveUser(session: UserSession): void {
 }
 
 export function saveName(name: string): void {
-  if (!canUseStorage()) {
-    return
-  }
+  if (typeof window === "undefined") return
+  if (!name || typeof name !== "string") return
 
   const currentSession = getUser()
 
   saveUser({
-    name,
+    name: name.trim(),
     seenQuestionIds: currentSession?.seenQuestionIds ?? [],
     sessionHistory: currentSession?.sessionHistory ?? [],
   })
+}
+
+export function logoutUser(): void {
+  if (typeof window === "undefined") return
+  localStorage.removeItem("quiz_user")
 }
 
 export function getUnseenQuestions(

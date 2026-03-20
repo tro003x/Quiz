@@ -172,7 +172,7 @@
 html {
   min-height: 100%;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-primary) #0b1120;
+  scrollbar-color: #16a34a #0b1120;
 }
 
 body {
@@ -228,12 +228,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #22c55e;
-  border-radius: 9999px;
+  background: #16a34a;
+  border-radius: 100px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #16a34a;
+  background: #006400;
 }
 
 /* Glassmorphism utility classes */

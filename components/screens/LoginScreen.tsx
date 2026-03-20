@@ -12,15 +12,31 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ appName, onLogin }: LoginScreenProps) {
   const [name, setName] = useState("");
+  const [error, setError] = useState("");
+
+  const validateName = (nameInput: string): boolean => {
+    const trimmed = nameInput.trim();
+    if (trimmed.length < 2) return false;
+    // Only Bengali letters, English letters and spaces
+    const validPattern = /^[a-zA-Z\u0980-\u09FF\s]+$/;
+    if (!validPattern.test(trimmed)) return false;
+    // Must have at least 2 actual letters (not just spaces)
+    const lettersOnly = trimmed.replace(/\s/g, "");
+    if (lettersOnly.length < 2) return false;
+    return true;
+  };
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedName = name.trim();
 
-    if (!trimmedName) {
+    if (!validateName(trimmedName)) {
+      setError("শুধুমাত্র বাংলা এবং ইংরেজি নাম গ্রহনযোগ্য");
       return;
     }
+
+    setError("");
 
     const currentSession = getUser();
 
@@ -46,10 +62,36 @@ export default function LoginScreen({ appName, onLogin }: LoginScreenProps) {
           <input
             type="text"
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            onChange={(event) => {
+              setName(event.target.value);
+              if (error) setError("");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSubmit(e as any);
+            }}
             placeholder="আপনার নাম লিখুন"
+            style={{
+              border: error
+                ? "1px solid rgba(239,68,68,0.6)"
+                : "1px solid rgba(255,255,255,0.15)",
+            }}
             className="h-12 w-full glass-input px-4"
           />
+
+          {error && (
+            <div
+              style={{
+                color: "#ef4444",
+                fontSize: "13px",
+                marginTop: "6px",
+                marginBottom: "4px",
+                textAlign: "left",
+                paddingLeft: "4px",
+              }}
+            >
+              {error}
+            </div>
+          )}
 
           <Button
             type="submit"

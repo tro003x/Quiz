@@ -20,6 +20,7 @@ import {
   markQuestionsSeen,
   saveName,
   saveSessionToHistory,
+  logoutUser,
 } from "@/lib/storage"
 import { SESSION_SIZE } from "@/lib/constants"
 import type { AppState, Question, UserResult, SessionRecord } from "@/types/quiz"
@@ -58,6 +59,7 @@ export default function Home() {
   const [sessionHistory, setSessionHistory] = useState<SessionRecord[]>([]);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [viewingSession, setViewingSession] = useState<SessionRecord | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const currentQuestion = sessionQuestions[currentIndex];
 
@@ -70,7 +72,7 @@ export default function Home() {
     setIsClient(true);
     const session = getUser();
 
-    if (session?.name) {
+    if (session?.name && session.name.trim() !== "") {
       setUserName(session.name);
       setScreen("start");
       const history = getSessionHistory(session);
@@ -78,13 +80,30 @@ export default function Home() {
       return;
     }
 
-    setScreen("login");
+    setUserName("");
+    setScreen("start");
   }, []);
 
   function handleLogin(name: string) {
-    saveName(name);
-    setUserName(name);
-    setScreen("start");
+    if (!name || typeof name !== "string") return
+    const trimmedName = name.trim()
+    saveName(trimmedName)
+    setUserName(trimmedName)
+    setShowLoginModal(false)
+    setScreen("start")
+  }
+
+  function handleLogout() {
+    logoutUser()
+    setUserName("")
+    setScreen("start")
+    setScore(0)
+    setCurrentIndex(0)
+    setResults([])
+    setSessionQuestions([])
+    setSessionHistory([])
+    setTimedOut(false)
+    setSelectedAnswer(null)
   }
 
   function handleStart() {
@@ -230,13 +249,14 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar 
-        userName={userName || "অতিথি"} 
+        userName={userName}
         score={score}
         screen={screen}
         sessionCount={sessionHistory.length}
         onOpenHistory={handleOpenHistory}
-        onLogin={handleLogin}
+        onLogin={() => setShowLoginModal(true)}
         onLogoClick={() => setScreen("start")}
+        onLogout={handleLogout}
       />
       <MarqueeBanner text={marqueeText} />
 
@@ -247,9 +267,9 @@ export default function Home() {
 
         {screen === "start" ? (
           <StartScreen
-            name={userName || "বন্ধু"}
-            description={quizDescription}
+            userName={userName}
             onStart={handleStart}
+            onLoginRequest={() => setShowLoginModal(true)}
           />
         ) : null}
 
@@ -270,7 +290,7 @@ export default function Home() {
 
         {screen === "result" ? (
           <ResultCardModal
-            name={userName || "অতিথি"}
+            name={userName}
             score={score}
             results={results}
             onShowExplanation={handleCloseResult}
@@ -295,7 +315,44 @@ export default function Home() {
         />
       )}
 
-      <Footer name={userName || "আপনার নাম"} links={footerLinks} />
+      <Footer name={userName} links={footerLinks} />
+
+      {showLoginModal && (
+        <div style={{ 
+          position: "fixed", 
+          inset: 0, 
+          background: "rgba(0,0,0,0.7)",
+          backdropFilter: "blur(8px)",
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center", 
+          zIndex: 200 
+        }}>
+          <div style={{ position: "relative" }}>
+            <button 
+              onClick={() => setShowLoginModal(false)}
+              style={{ 
+                position: "absolute", 
+                top: "-12px", 
+                right: "-12px",
+                background: "rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: "50%", 
+                width: "32px", 
+                height: "32px",
+                color: "white", 
+                cursor: "pointer", 
+                fontSize: "16px",
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center"
+              }}>
+              ✕
+            </button>
+            <LoginScreen onLogin={handleLogin} appName={APP_NAME} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
