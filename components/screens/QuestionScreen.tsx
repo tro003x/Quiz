@@ -7,6 +7,8 @@ import QuestionCard from "@/components/quiz/QuestionCard";
 import TimerBar from "@/components/quiz/TimerBar";
 import UpcomingPanel from "@/components/quiz/UpcomingPanel";
 import { getButtonState } from "@/lib/quiz";
+import { convertToBengaliDigits } from "@/lib/utils";
+import { X } from "lucide-react";
 import type { Question } from "@/types/quiz";
 
 interface QuestionScreenProps {
@@ -20,6 +22,7 @@ interface QuestionScreenProps {
   onTimeout: () => void;
   upcomingQuestions: Question[];
   timedOut: boolean;
+  onQuitQuiz: () => void;
 }
 
 export default function QuestionScreen({
@@ -33,6 +36,7 @@ export default function QuestionScreen({
   onTimeout,
   upcomingQuestions,
   timedOut,
+  onQuitQuiz,
 }: QuestionScreenProps) {
   const hasFeedback = isFeedback || timedOut;
 
@@ -57,7 +61,7 @@ export default function QuestionScreen({
               />
 
               <h2 className="text-2xl font-bold leading-10 text-white sm:text-3xl">
-                {question.question}
+                {convertToBengaliDigits(question.question)}
               </h2>
 
               <div className="space-y-3">
@@ -78,17 +82,53 @@ export default function QuestionScreen({
               </div>
 
               {hasFeedback ? (
-                <Button
-                  type="button"
-                  size="lg"
-                  onClick={onNext}
-                  className="h-12 rounded-2xl bg-[#EAB308] px-6 font-semibold text-[#1a1200] hover:bg-[#facc15]"
-                >
-                  পরবর্তী প্রশ্ন
-                </Button>
+                <div style={{ display: "flex", justifyContent: "right" }}>
+                  <Button
+                    type="button"
+                    size="lg"
+                    onClick={onNext}
+                    className="h-12 rounded-2xl bg-[#EAB308] px-6 font-semibold text-[#1a1200] hover:bg-[#facc15]"
+                  >
+                    পরবর্তী প্রশ্ন
+                  </Button>
+                </div>
               ) : null}
             </div>
           </QuestionCard>
+
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "16px",
+        }}>
+          <button
+            onClick={onQuitQuiz}
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(239,68,68,0.3)",
+              borderRadius: "100px",
+              padding: "8px 24px",
+              color: "rgba(239,68,68,0.7)",
+              fontSize: "13px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(239,68,68,0.6)";
+              e.currentTarget.style.color = "#ef4444";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)";
+              e.currentTarget.style.color = "rgba(239,68,68,0.7)";
+            }}
+          >
+            <X size={14} />
+            কুইজ বাদ দিন
+          </button>
+        </div>
         </div>
 
         <div className="hidden md:col-span-4 md:grid md:grid-rows-11">

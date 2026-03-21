@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
-import { bn } from "@/lib/utils"
+import { BnDigit } from "@/lib/utils"
 
 interface TimerBarProps {
   duration: number
@@ -91,8 +91,8 @@ export default function TimerBar({
         fontSize: "12px",
         color: isUrgent ? "#ef4444" : "#86efac"
       }}>
-        <span>সময় বাকি</span>
-        <span>{bn(timeLeft)}s</span>
+        <span>সময় বাকি </span>
+        <span><BnDigit n={timeLeft} />  সেকেন্ড</span>
       </div>
       <div style={{
         width: "100%",

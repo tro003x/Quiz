@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, convertToBengaliDigits } from "@/lib/utils";
 
 interface AnswerButtonProps {
   label: string;
@@ -32,7 +32,7 @@ export default function AnswerButton({
         isIdle && "cursor-pointer"
       )}
     >
-      {label}
+      {convertToBengaliDigits(label)}
     </button>
   );
 }

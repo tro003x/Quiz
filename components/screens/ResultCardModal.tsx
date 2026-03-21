@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { bn } from "@/lib/utils";
+import { BnDigit } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { getFeedbackMessage } from "@/lib/quiz";
@@ -56,7 +56,7 @@ export default function ResultCardModal({
         <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">{name}</h2>
 
         <p className="mt-4 text-5xl font-extrabold text-[#EAB308] sm:text-6xl">
-          {bn(score)}/{bn(10)}
+          <BnDigit n={score} />/<BnDigit n={10} />
         </p>
 
         <p className="mt-5 text-base leading-7 text-[#fef3c7]">{feedbackMessage}</p>

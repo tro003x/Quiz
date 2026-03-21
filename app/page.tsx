@@ -228,6 +228,16 @@ export default function Home() {
     setScreen("start")
   }
 
+  function handleQuitQuiz() {
+    setScreen("start")
+    setCurrentIndex(0)
+    setScore(0)
+    setSelectedAnswer(null)
+    setResults([])
+    setTimedOut(false)
+    setSessionQuestions([])
+  }
+
   const handleOpenHistory = () => {
     setShowHistoryModal(true);
   };
@@ -258,7 +268,7 @@ export default function Home() {
         onLogoClick={() => setScreen("start")}
         onLogout={handleLogout}
       />
-      <MarqueeBanner text={marqueeText} />
+      {screen !== "question" && <MarqueeBanner text={marqueeText} />}
 
       <main className="flex-1">
         {screen === "login" ? (
@@ -285,6 +295,7 @@ export default function Home() {
             onTimeout={handleTimeout}
             upcomingQuestions={upcomingQuestions}
             timedOut={timedOut}
+            onQuitQuiz={handleQuitQuiz}
           />
         ) : null}
 
@@ -303,6 +314,7 @@ export default function Home() {
             results={viewingSession ? viewingSession.results : results}
             onRestart={handleRestart}
             onGoHome={handleGoHome}
+            onNewSession={handleRestart}
           />
         ) : null}
       </main>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Home } from "lucide-react";
-import { bn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Home, RefreshCw } from "lucide-react";
+import { BnDigit } from "@/lib/utils";
 import type { UserResult } from "@/types/quiz";
 import { renderExplanation } from "@/lib/quiz";
 
@@ -10,12 +10,14 @@ interface ExplanationScreenProps {
   results: UserResult[];
   onRestart: () => void;
   onGoHome: () => void;
+  onNewSession: () => void;
 }
 
 export default function ExplanationScreen({
   results,
   onRestart,
   onGoHome,
+  onNewSession,
 }: ExplanationScreenProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"left" | "right">("left");
@@ -79,7 +81,7 @@ export default function ExplanationScreen({
           letterSpacing: "0.05em",
         }}
       >
-        ব্যাখ্যা {bn(currentSlide + 1)}/{bn(results.length)}
+        ব্যাখ্যা <BnDigit n={currentSlide + 1} />/<BnDigit n={results.length} />
       </p>
 
       <div
@@ -279,34 +281,73 @@ export default function ExplanationScreen({
         </button>
       </div>
 
-      <button
-        onClick={onGoHome}
+      <div
         style={{
-          marginTop: "24px",
-          background: "transparent",
-          border: "1px solid rgba(255,255,255,0.2)",
-          borderRadius: "100px",
-          padding: "10px 28px",
-          color: "rgba(255,255,255,0.7)",
-          fontSize: "14px",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
           display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "rgba(34,197,94,0.5)";
-          e.currentTarget.style.color = "#22c55e";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
-          e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+          gap: "12px",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          marginTop: "24px",
         }}
       >
-        <Home size={15} />
-        ফিরে যান
-      </button>
+        <button
+          onClick={onGoHome}
+          style={{
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: "100px",
+            padding: "10px 28px",
+            color: "rgba(255,255,255,0.7)",
+            fontSize: "14px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(34,197,94,0.5)";
+            e.currentTarget.style.color = "#22c55e";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
+            e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+          }}
+        >
+          <Home size={15} />
+          ফিরে যান
+        </button>
+
+        <button
+          onClick={onNewSession}
+          style={{
+            background: "#16a34a",
+            border: "none",
+            borderRadius: "100px",
+            padding: "10px 28px",
+            color: "white",
+            fontSize: "14px",
+            fontWeight: 600,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            boxShadow: "0 0 20px rgba(22,163,74,0.3)",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#15803d";
+            e.currentTarget.style.boxShadow = "0 0 28px rgba(22,163,74,0.5)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "#16a34a";
+            e.currentTarget.style.boxShadow = "0 0 20px rgba(22,163,74,0.3)";
+          }}
+        >
+          <RefreshCw size={15} />
+          নতুন সেশন শুরু করুন
+        </button>
+      </div>
 
       <div
         style={{

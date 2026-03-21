@@ -2,6 +2,14 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@font-face {
+  font-family: "BengaliNumerals";
+  src: local("Hind Siliguri"),
+       local("Noto Sans Bengali"),
+       local("sans-serif");
+  unicode-range: U+09E6-U+09EF;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -178,7 +186,12 @@ html {
 body {
   min-height: 100vh;
   background: linear-gradient(135deg, #020c07, #041a0e, #061f10);
-  font-family: var(--font-hind-siliguri), "Hind Siliguri", "Times New Roman", Times, serif;
+  font-family: var(--font-hind-siliguri), 
+               "Hind Siliguri",
+               "BengaliNumerals",
+               "Noto Sans Bengali",
+               sans-serif;
+  font-feature-settings: "bng2" 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -310,9 +323,15 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 24px;
 }
 
+.bn-digit {
+  font-family: var(--font-bengali-digit), "Noto Sans Bengali", sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    -webkit-locale: "bn";
+    locale: "bn";
   }
   html {
     @apply font-sans;

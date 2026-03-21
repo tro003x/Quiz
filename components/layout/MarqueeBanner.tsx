@@ -20,8 +20,7 @@ export default function MarqueeBanner({ text }: { text: string }) {
           white-space: nowrap;
           font-size: 13px;
           color: rgba(255,255,255,0.55);
-          animation: newsTicker 20s linear infinite;
-          animation-delay: 0s;
+          animation: newsTicker 30s linear infinite;
         }
       `}</style>
 
@@ -55,9 +54,9 @@ export default function MarqueeBanner({ text }: { text: string }) {
           pointerEvents: "none",
         }} />
 
-        {/* Single text span */}
+        {/* Duplicate text for seamless loop */}
         <span className="ticker-text">
-          {text}
+          {text} • {text}
         </span>
 
       </div>

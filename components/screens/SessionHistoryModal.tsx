@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { bn } from "@/lib/utils";
+import { BnDigit } from "@/lib/utils";
 import type { SessionRecord } from "@/types/quiz";
 
 interface SessionHistoryModalProps {
@@ -205,7 +205,7 @@ export default function SessionHistoryModal({
                       marginBottom: "4px",
                     }}
                   >
-                    সেশন {bn(record.sessionNumber)}
+                    সেশন <BnDigit n={record.sessionNumber} />
                   </p>
                   <p
                     style={{
@@ -235,7 +235,7 @@ export default function SessionHistoryModal({
                       lineHeight: 1,
                     }}
                   >
-                    {bn(record.score)}/{bn(record.total)}
+                    <BnDigit n={record.score} />/<BnDigit n={record.total} />
                   </p>
                   <p
                     style={{

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { BnDigit } from "@/lib/utils";
 import type { Question } from "@/types/quiz";
 
 interface UpcomingPanelProps {
@@ -35,7 +36,7 @@ export default function UpcomingPanel({
             style={{ opacity: previewOpacities[index] ?? 0.2 } as CSSProperties}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#EAB308]">
-              প্রশ্ন {index + 2}
+              প্রশ্ন <BnDigit n={index + 2} />
             </p>
             <p className="mt-2 text-sm leading-6 text-white/90">
               {getPreviewText(question.question)}
