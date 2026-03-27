@@ -8,9 +8,10 @@ import { getUser, saveUser } from "@/lib/storage";
 interface LoginScreenProps {
   appName: string;
   onLogin: (name: string) => void;
+  onClose?: () => void;
 }
 
-export default function LoginScreen({ appName, onLogin }: LoginScreenProps) {
+export default function LoginScreen({ appName, onLogin, onClose }: LoginScreenProps) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
@@ -50,7 +51,30 @@ export default function LoginScreen({ appName, onLogin }: LoginScreenProps) {
 
   return (
     <section className="flex min-h-[calc(100vh-12rem)] items-center justify-center px-4 py-10">
-      <div className="glass-card-strong w-full max-w-md p-8">
+      <div className="glass-card-strong w-full max-w-md p-8 relative">
+        {onClose && (
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: "12px",
+              right: "12px",
+              background: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              borderRadius: "50%",
+              width: "32px",
+              height: "32px",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ✕
+          </button>
+        )}
         <div className="space-y-3 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-white">{appName}</h1>
           <p className="text-sm leading-6 text-[#fef3c7]/80">

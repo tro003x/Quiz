@@ -340,29 +340,11 @@ export default function Home() {
           justifyContent: "center", 
           zIndex: 200 
         }}>
-          <div style={{ position: "relative" }}>
-            <button 
-              onClick={() => setShowLoginModal(false)}
-              style={{ 
-                position: "absolute", 
-                top: "-12px", 
-                right: "-12px",
-                background: "rgba(255,255,255,0.1)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: "50%", 
-                width: "32px", 
-                height: "32px",
-                color: "white", 
-                cursor: "pointer", 
-                fontSize: "16px",
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center"
-              }}>
-              ✕
-            </button>
-            <LoginScreen onLogin={handleLogin} appName={APP_NAME} />
-          </div>
+          <LoginScreen 
+            onLogin={handleLogin} 
+            appName={APP_NAME}
+            onClose={() => setShowLoginModal(false)}
+          />
         </div>
       )}
     </div>

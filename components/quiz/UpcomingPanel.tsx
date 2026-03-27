@@ -5,6 +5,7 @@ import type { Question } from "@/types/quiz";
 
 interface UpcomingPanelProps {
   upcomingQuestions: Question[];
+  currentQuestionNumber: number;
 }
 
 const previewOpacities = [0.7, 0.45, 0.2];
@@ -15,6 +16,7 @@ function getPreviewText(text: string) {
 
 export default function UpcomingPanel({
   upcomingQuestions,
+  currentQuestionNumber,
 }: UpcomingPanelProps) {
   const previewQuestions = upcomingQuestions.slice(0, 3);
 
@@ -36,7 +38,7 @@ export default function UpcomingPanel({
             style={{ opacity: previewOpacities[index] ?? 0.2 } as CSSProperties}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#EAB308]">
-              প্রশ্ন <BnDigit n={index + 2} />
+              প্রশ্ন <BnDigit n={currentQuestionNumber + index + 1} />
             </p>
             <p className="mt-2 text-sm leading-6 text-white/90">
               {getPreviewText(question.question)}

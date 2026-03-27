@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle, XCircle, Home, RefreshCw } from "lucide-react";
-import { BnDigit } from "@/lib/utils";
+import { BnDigit, bn } from "@/lib/utils";
 import type { UserResult } from "@/types/quiz";
 import { renderExplanation } from "@/lib/quiz";
 

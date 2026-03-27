@@ -134,7 +134,7 @@ export default function QuestionScreen({
         <div className="hidden md:col-span-4 md:grid md:grid-rows-11">
           <div className="row-span-3" />
           <div className="row-span-5 flex items-center justify-end">
-            <UpcomingPanel upcomingQuestions={upcomingQuestions} />
+            <UpcomingPanel upcomingQuestions={upcomingQuestions} currentQuestionNumber={questionNumber} />
           </div>
           <div className="row-span-3" />
         </div>
