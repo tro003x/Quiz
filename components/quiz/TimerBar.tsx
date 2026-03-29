@@ -17,9 +17,9 @@ export default function TimerBar({
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const hasTimedOut = useRef(false)
   const onTimeoutRef = useRef(onTimeout)
-  const isActiveRef = useRef(isActive) // Track isActive in ref for immediate checks
+  const isActiveRef = useRef(isActive) 
 
-  // Keep refs fresh
+
   useEffect(() => {
     onTimeoutRef.current = onTimeout
   }, [onTimeout])
@@ -28,15 +28,13 @@ export default function TimerBar({
     isActiveRef.current = isActive
   }, [isActive])
 
-  // Reset when duration changes (new question)
   useEffect(() => {
     setTimeLeft(duration)
     hasTimedOut.current = false
   }, [duration])
 
-  // Start/stop based on isActive
   useEffect(() => {
-    // If not active, clear immediately
+    
     if (!isActive) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
@@ -47,7 +45,7 @@ export default function TimerBar({
 
     // Start interval
     intervalRef.current = setInterval(() => {
-      // Check isActive ref first — stop immediately if false
+      
       if (!isActiveRef.current) {
         clearInterval(intervalRef.current!)
         intervalRef.current = null

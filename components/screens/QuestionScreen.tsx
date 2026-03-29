@@ -82,14 +82,14 @@ export default function QuestionScreen({
               </div>
 
               {hasFeedback ? (
-                <div style={{ display: "flex", justifyContent: "right" }}>
+                <div style={{ display: "flex", justifyContent: questionNumber === totalQuestions ? "center" : "right" }}>
                   <Button
                     type="button"
                     size="lg"
                     onClick={onNext}
                     className="h-12 rounded-2xl bg-[#EAB308] px-6 font-semibold text-[#1a1200] hover:bg-[#facc15]"
                   >
-                    পরবর্তী প্রশ্ন
+                    {questionNumber === totalQuestions ? "জমা দিন" : "পরবর্তী প্রশ্ন"}
                   </Button>
                 </div>
               ) : null}
