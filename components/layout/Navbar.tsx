@@ -113,9 +113,9 @@ export default function Navbar({
           </span>
         </div>
 
-        {/* CENTER SECTION: Score pill (hidden on mobile) */}
+        {/* CENTER SECTION: Score pill (hidden on mobile when logged in) */}
         <div
-          className="hidden md:flex"
+          className={isLoggedIn ? "hidden md:flex" : "flex"}
           style={{
             background: "transparent",
             border: "1px solid rgba(34,197,94,0.5)",

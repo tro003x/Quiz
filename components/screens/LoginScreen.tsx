@@ -33,7 +33,7 @@ export default function LoginScreen({ appName, onLogin, onClose }: LoginScreenPr
     const trimmedName = name.trim();
 
     if (!validateName(trimmedName)) {
-      setError("শুধুমাত্র বাংলা এবং ইংরেজি নাম গ্রহনযোগ্য");
+      setError("উপযুক্ত নাম প্রদান করুন। শুধুমাত্র বাংলা এবং ইংরেজি নাম গ্রহনযোগ্য");
       return;
     }
 
