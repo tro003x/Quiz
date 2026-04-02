@@ -30,7 +30,15 @@ export default function Navbar({
   const isInQuizScreen = screen === "question";
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showLogoModal, setShowLogoModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -113,8 +121,8 @@ export default function Navbar({
           </span>
         </div>
 
-        {/* CENTER SECTION: Score pill (hidden when logged in) */}
-        {!isLoggedIn && (
+        {/* CENTER SECTION: Score pill */}
+        {!(isLoggedIn && isMobile) && (
           <div
             style={{
               background: "transparent",
