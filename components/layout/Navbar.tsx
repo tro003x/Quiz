@@ -113,35 +113,36 @@ export default function Navbar({
           </span>
         </div>
 
-        {/* CENTER SECTION: Score pill (hidden on mobile when logged in) */}
-        <div
-          className={isLoggedIn ? "hidden md:flex" : "flex"}
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(34,197,94,0.5)",
-            borderRadius: "15px",
-            padding: "7px 18px",
-            display: "flex",
-            gap: "8px",
-            alignItems: "center",
-            fontSize: "13px",
-            color: "#22c55e",
-            transition: "border-color 0.2s, color 0.2s",
-            cursor: "default"
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"
-            e.currentTarget.style.color = "rgba(255,255,255,0.9)"
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "rgba(34,197,94,0.5)"
-            e.currentTarget.style.color = "#22c55e"
-          }}
-        >
-          <span style={{ fontWeight: "600" }}>
-            আমার দ্বীন আমার যমীন
-          </span>
-        </div>
+        {/* CENTER SECTION: Score pill (hidden when logged in) */}
+        {!isLoggedIn && (
+          <div
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(34,197,94,0.5)",
+              borderRadius: "15px",
+              padding: "7px 18px",
+              gap: "8px",
+              alignItems: "center",
+              fontSize: "13px",
+              color: "#22c55e",
+              transition: "border-color 0.2s, color 0.2s",
+              cursor: "default",
+              display: "flex"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"
+              e.currentTarget.style.color = "rgba(255,255,255,0.9)"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(34,197,94,0.5)"
+              e.currentTarget.style.color = "#22c55e"
+            }}
+          >
+            <span style={{ fontWeight: "600" }}>
+              আমার দ্বীন আমার যমীন
+            </span>
+          </div>
+        )}
 
         {/* RIGHT SECTION: Login or User Dropdown */}
         {userName && userName.trim() !== "" ? (
