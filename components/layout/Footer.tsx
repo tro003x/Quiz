@@ -18,7 +18,7 @@ export default function Footer({ name }: FooterProps) {
   return (
     <footer className="glass-navbar w-full px-4 py-6">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 border-t border-[rgba(255,255,255,0.08)] pt-6 text-center">
-        <p className="text-lg font-bold text-white">{name}</p>
+        <p className="text-lg font-bold text-white">স্বাগতম, {name}</p>
 
         <div className="flex items-center justify-center gap-4">
           <p className="text-lg text-white/80">Made by tro003x</p>
