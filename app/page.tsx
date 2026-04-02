@@ -34,10 +34,7 @@ const marqueeText = "মুসলিমবঙ্গ কুইজে আপনা
 
 const footerLinks = [
   { platform: "github", href: "https://github.com" },
-  { platform: "facebook", href: "https://facebook.com" },
-  { platform: "twitter/x", href: "https://x.com" },
-  { platform: "linkedin", href: "https://linkedin.com" },
-  { platform: "email", href: "mailto:you@example.com" },
+  
 ];
 
 const questionBank = questionsData as Question[];
