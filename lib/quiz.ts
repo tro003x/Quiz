@@ -25,11 +25,11 @@ export function getStratifiedQuestions(
   sessionSize: number = SESSION_SIZE
 ): Question[] {
 
-  // Step 1: Filter unseen, fallback to all if cycle complete
+  // fallback to all if cycle complete
   const unseen = allQuestions.filter(q => !seenIds.includes(q.id))
   const pool = unseen.length >= sessionSize ? unseen : [...allQuestions]
 
-  // Step 2: Group by category
+  // group by category
   const grouped: Record<string, Question[]> = {}
   for (const q of pool) {
     const cat = q.category.trim()
@@ -37,7 +37,7 @@ export function getStratifiedQuestions(
     grouped[cat].push(q)
   }
 
-  // Step 3: Shuffle questions within each category
+  // shuffle questions of each category
   for (const cat in grouped) {
     grouped[cat] = shuffleArray(grouped[cat])
   }
@@ -45,8 +45,7 @@ export function getStratifiedQuestions(
   const selected: Question[] = []
   const selectedIds = new Set<number>()
 
-  // Step 4: Phase 1 — pick 1 from each category
-  // BUT stop if we already hit sessionSize
+ 
   const categories = Object.keys(grouped)
   for (const cat of categories) {
     if (selected.length >= sessionSize) break
@@ -57,8 +56,8 @@ export function getStratifiedQuestions(
     }
   }
 
-  // Step 5: Phase 2 — fill remaining slots if Phase 1 
-  // didn't reach sessionSize (fewer categories than sessionSize)
+  //fill remaining slots if Phase 1 
+  // didn't reach sessionSize 
   const needed = sessionSize - selected.length
   if (needed > 0) {
     const remaining = shuffleArray(
@@ -70,7 +69,7 @@ export function getStratifiedQuestions(
     }
   }
 
-  // Step 6: Final shuffle and hard slice to guarantee exact count
+  
   const final = shuffleArray(selected).slice(0, sessionSize)
 
   console.log("✅ Final session size:", final.length)
@@ -128,10 +127,10 @@ export function getFeedbackMessage(score: number): string {
   }
 
   if (score >= 8) {
-    return "ভালো করেছেন, আরও পড়ুন"
+    return "ভালো করেছেন,তবে আরও জানতে হবে"
   }
 
-  return "আপনার আরো অনেককিছু জানা বাকি"
+  return "আপনার আরও অনেককিছু জানা বাকি"
 }
 
 export type ExplanationPart = {

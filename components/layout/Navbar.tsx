@@ -29,7 +29,6 @@ export default function Navbar({
   const isLoggedIn = userName && userName.trim() !== "";
   const isInQuizScreen = screen === "question";
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showLogoModal, setShowLogoModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +80,7 @@ export default function Navbar({
       >
         {/* LEFT SECTION: Logo + Brand */}
         <div 
-          onClick={() => setShowLogoModal(true)}
+          onClick={onLogoClick}
           style={{ 
             display: "flex", 
             alignItems: "center", 
@@ -279,91 +278,6 @@ export default function Navbar({
 
         )}
       </div>
-
-      {/* Logo Modal */}
-      {showLogoModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(8px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            cursor: "pointer",
-            overflow: "hidden",
-            padding: "20px",
-          }}
-          onClick={() => setShowLogoModal(false)}
-        >
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              maxWidth: "400px",
-              background: "rgba(5, 20, 10, 0.9)",
-              border: "1px solid rgba(34,197,94,0.2)",
-              borderRadius: "20px",
-              padding: "30px 20px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "20px",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src="/logo.jpg"
-              alt="মুসলিমবঙ্গ Logo"
-              style={{
-                width: "280px",
-                height: "280px",
-                objectFit: "contain",
-                borderRadius: "15px",
-              }}
-            />
-            {/* Close button */}
-            <button
-              onClick={() => setShowLogoModal(false)}
-              style={{
-                position: "absolute",
-                top: "15px",
-                right: "15px",
-                background: "rgba(255,255,255,0.1)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: "50%",
-                width: "36px",
-                height: "36px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontSize: "20px",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-                e.currentTarget.style.transform = "scale(1.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }

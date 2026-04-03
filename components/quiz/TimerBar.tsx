@@ -43,7 +43,7 @@ export default function TimerBar({
       return
     }
 
-    // Start interval
+    
     intervalRef.current = setInterval(() => {
       
       if (!isActiveRef.current) {
