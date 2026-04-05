@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A modern, interactive quiz application built with Next.js, featuring timed questions, progress tracking, and session history management.
 
-## Getting Started
+🎯 Features
+User Authentication: Login screen with session management
+Timed Questions: Each question has a countdown timer to encourage quick thinking
+Multiple Choice: 4-option multiple choice questions with instant feedback
+Progress Tracking: Visual progress indicator showing current question position
+Explanations: Detailed explanations for each answer after submission
+Session History: Track and review all previous quiz attempts
+Result Analytics: See your score and performance metrics after completing a quiz
+Upcoming Questions Panel: Preview upcoming questions in the session
+Responsive Design: Works seamlessly on desktop and mobile devices
 
-First, run the development server:
+🛠️ Tech Stack
+Framework: Next.js 16.1.6 - React framework with SSR support
+Language: TypeScript 5 - Type-safe JavaScript
+Styling: Tailwind CSS 4 - Utility-first CSS framework
+Components: shadcn/ui - High-quality React components
+Icons: Lucide React - Beautiful icon library
+UI Libraries: Radix UI - Accessible component primitives
+Data: JSON - Question storage
 
-```bash
+
+📂 Project Structure
+quiz/
+├── app/                     
+│   ├── layout.tsx           
+│   ├── page.tsx            
+│   └── globals.css          
+├── components/              
+│   ├── layout/              
+│   ├── quiz/                
+│   │   ├── AnswerButton.tsx
+│   │   ├── ProgressIndicator.tsx
+│   │   ├── QuestionCard.tsx
+│   │   ├── TimerBar.tsx
+│   │   └── UpcomingPanel.tsx
+│   ├── screens/           
+│   │   ├── LoginScreen.tsx
+│   │   ├── StartScreen.tsx
+│   │   ├── QuestionScreen.tsx
+│   │   ├── ExplanationScreen.tsx
+│   │   ├── ResultCardModal.tsx
+│   │   └── SessionHistoryModal.tsx
+│   └── ui/                  
+├── lib/                    
+│   ├── quiz.ts           
+│   ├── storage.ts          
+│   ├── constants.ts      
+│   └── utils.ts          
+├── types/                
+│   └── quiz.ts           
+├── data/                  
+│   └── questions.json     
+└── public/    
+
+
+🚀 Getting Started
+
+Prerequisites
+Node.js 18+ or higher
+npm, yarn, or pnpm package manager
+
+# Installation
+
+Clone the repository:
+git clone <repository-url>
+cd quiz
+
+Install dependencies:
+npm install
+
+Generate questions (optional - for custom questions):
+python generate_questions.py
+
+Running the Application
+Development Server:
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 to view the app in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Production Build:
+npm run build
+npm run start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Linting:
+npm run lint
 
-## Learn More
+📋 Application States
+The quiz application operates through several states:
 
-To learn more about Next.js, take a look at the following resources:
+Login - User enters their name
+Start - Welcome screen before quiz begins
+Question - Active question with timer
+Result - Score and performance summary
+Explanation - Detailed answer explanation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+📊 Data Structure
+Question Format
+{
+  id: number;
+  question: string;
+  options: [string, string, string, string];
+  correctIndex: number;
+  explanation: string;
+  category: string;
+  difficulty: "easy" | "medium" | "hard";
+}
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Session History
+The application stores user sessions with:
 
-## Deploy on Vercel
+Session number
+Date
+Score and total questions
+Individual results with timing and correctness
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+🎨 Customization
+Adding Questions
+Edit questions.json or use the generate_questions.py script to create questions programmatically.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Styling
+Global styles in globals.css
+Component-specific styles using Tailwind CSS utility classes
+Configure Tailwind in tailwind.config.ts
+Configuration
+App constants in constants.ts
+Quiz logic in quiz.ts
+
+📱 Features in Detail
+Timer: Countdown timer for each question (configurable duration)
+Progress Bar: Visual indicator of quiz progress
+Answer Feedback: Immediate feedback after selecting an answer
+Session Persistence: User progress saved to browser localStorage
+Answer History: Review all previous answers and explanations
+Category Organization: Questions organized by subject category
+
+
+This project is private. See the repository for more information.
+
+Claude Haiku 4.5 • 0.33x
