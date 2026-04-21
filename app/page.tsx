@@ -304,6 +304,7 @@ export default function Home() {
             results={results}
             onShowExplanation={handleCloseResult}
             onRestart={handleRestart}
+            onGoHome={handleGoHome}
           />
         ) : null}
 

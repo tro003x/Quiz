@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { Home } from "lucide-react";
 import { BnDigit } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ interface ResultCardModalProps {
   results: UserResult[];
   onShowExplanation: () => void;
   onRestart: () => void;
+  onGoHome: () => void;
 }
 
 const TOTAL_QUESTIONS = 10;
@@ -33,6 +35,7 @@ export default function ResultCardModal({
   results,
   onShowExplanation,
   onRestart,
+  onGoHome,
 }: ResultCardModalProps) {
   const feedbackMessage = getFeedbackMessage(score);
 
@@ -92,6 +95,38 @@ export default function ResultCardModal({
             className="w-full h-14 rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.15)] px-6 py-3 text-base font-semibold text-white hover:bg-[rgba(255,255,255,0.1)]"
           >
             নতুন সেশন
+          </button>
+
+          <button
+            type="button"
+            onClick={onGoHome}
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.2)",
+              borderRadius: "100px",
+              padding: "8px 20px",
+              color: "rgba(255,255,255,0.7)",
+              fontSize: "14px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              transition: "all 0.2s ease",
+              margin: "0 auto",
+              width: "auto"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+              e.currentTarget.style.color = "rgba(255,255,255,0.9)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
+              e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+            }}
+          >
+            <Home size={18} />
+            ফিরে যান
           </button>
         </div>
       </div>
