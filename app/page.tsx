@@ -185,7 +185,8 @@ export default function Home() {
       saveSessionToHistory(results, score, updatedUser);
       
       
-      const history = getSessionHistory(updatedUser);
+      const userWithHistory = getUser() ?? updatedUser;
+      const history = getSessionHistory(userWithHistory);
       setSessionHistory(history);
       
       setScreen("result");

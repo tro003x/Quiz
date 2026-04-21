@@ -36,7 +36,7 @@ export function getStratifiedQuestions(
     if (!grouped[cat]) grouped[cat] = []
     grouped[cat].push(q)
   }
-
+                                                            
   // shuffle questions of each category
   for (const cat in grouped) {
     grouped[cat] = shuffleArray(grouped[cat])
